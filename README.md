@@ -148,8 +148,10 @@ This also applies to _must have_ values you set yourself.
 
 
   <details>
-  <summary>Options</summary>
-  * one
+  <summary>Options for `int()`</summary>
+  | `min:` | -1_000_000 | the minimum value to be returned |
+  | `max:` |  1_000_000 | and the maximum value            |
+  | `must_have:` | [ -1, 0, 1 ] | see above |
 
   * two
   </details>
