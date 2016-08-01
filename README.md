@@ -127,7 +127,7 @@ This also applies to _must have_ values you set yourself.
 
 ## API
 
-`a(«value»)`  _or_  `an(«value»)`
+#### `a(«value»)`  _or_  `an(«value»)`
 
 > a stream of the given value. For example
 
@@ -138,13 +138,15 @@ This also applies to _must have_ values you set yourself.
       [ "aardvark", "aardvark" ]
 
 
-`int(«options»)`
+#### `int(«options»)`
 
 > a stream of integers.
 
       iex> import Pollution.VG
       iex> int |> Enum.take(7)
       [ -1, 0, 1, 849242, -71212, 34, 9310101 ]
+      iex> int(min: 1, max: 6) |> Enum.take(7)
+      [ 1, 6, 2, 3, 1, 5, 2 ]
 
 
   <details>
@@ -157,6 +159,8 @@ This also applies to _must have_ values you set yourself.
 | `must_have:` | [ -1, 0, 1 ] | see [above](#must-have-values)   |
 
   </details>
+
+
 
 
 
