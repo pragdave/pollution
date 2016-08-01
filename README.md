@@ -148,11 +148,12 @@ This also applies to _must have_ values you set yourself.
 
 
   <details>
-    <summary>
-      Options
-    </summary>
+    <summary>Options</summary>
+
     * one
+
     * two
+
   </details>
 
 
