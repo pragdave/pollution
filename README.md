@@ -149,6 +149,7 @@ This also applies to _must have_ values you set yourself.
 
   <details>
   <summary>Options for `int()`</summary>
+
   | Option | default | meaning |
   |--------|--------:|---------|
   | `min:` | -1_000_000 | the minimum value to be returned |
