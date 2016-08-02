@@ -161,6 +161,18 @@ This also applies to _must have_ values you set yourself.
   </details>
 
 
+#### `seq([ «value_generator», … ] )`
+
+> a stream containing values from the given list of value generators.
+> The first entry in the stream will be generated from the first value
+> generator, the second from the second and so on. When the end of the
+> list of vgs is reached, it restarts from the beginning
+
+      iex> import Pollution.VG
+      iex> seq([int, float, atom]) |> Enum.take(7)
+      [ -1, 45.67, :jjo0, 0, -88401.084, :"jk&*(", 1 ]
+
+
 
 
 
