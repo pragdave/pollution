@@ -1,6 +1,7 @@
 defmodule Pollution.Generator.Int do
 
   alias Pollution.{State, Util}
+  alias Pollution.Generator, as: G
 
   @state %State{
     type:       __MODULE__,
@@ -36,15 +37,10 @@ defmodule Pollution.Generator.Int do
 
     state = update_with_derived_values(state, locals)
 
-    case state.must_have do
-
-      [ h | t ] ->
-        { h, %State{state | must_have: t} }
-
-      _ ->
-        val = Util.rand_between(state.min, state.max)
-        {val, state}
-    end
+    G.after_emptying_must_have(state, fn (state) ->
+      val = Util.rand_between(state.min, state.max)
+      {val, state}
+    end)
   end
 
 
