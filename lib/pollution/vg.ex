@@ -5,8 +5,15 @@ defmodule Pollution.VG do
 
 #  def any(gen_list), do: Any.create(gen_list)
 
+  @doc """
+  Return a stream of random booleans (`true` or `false`).
 
-  def bool(),             do: choose(from: [ true, false ])
+  ## Example
+
+        iex> bool |> as_stream |> Enum.take(5)
+        [true, false, true, true, false]
+  """
+  def bool(),             do: choose(from: [ value(true), value(false) ])
 
   def choose(options),    do: Choose.create(options)
 
