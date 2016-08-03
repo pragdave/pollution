@@ -1,6 +1,7 @@
 defmodule Pollution.Generator.String do
 
   alias Pollution.{State, Util}
+  alias Pollution.Generator, as: G
 
   @defaults %State{
     type:       __MODULE__,
@@ -64,27 +65,21 @@ defmodule Pollution.Generator.String do
 
   The next value is chosen randomly from generator_constraints.list
   """
-  def next_value(state, locals) do
+  def next_value(state, _locals) do
 
 #    type = update_with_derived_values(type, locals)
 
-    case state.must_have do
-
-      [ h | t ] ->
-        { h, %State{state | must_have: t} }
-
-      _ ->
-        with len = Util.rand_between(state.min, state.max),
-             val = generate_chars(state, len) do
-          {val, state}
-        end
-    end
+    G.after_emptying_must_have(state, fn (state)->
+      len = Util.rand_between(state.min, state.max)
+      val = generate_chars(state, len)
+      {val, state}
+    end)
   end
 
   defp generate_chars(_, 0), do: ""
   defp generate_chars(state, len) do
     range = state.extra.char_range
-    char_generator = fn n ->
+    char_generator = fn _n ->
       :rand.uniform(range.last - range.first + 1) + range.first - 1
     end
     Enum.map(1..len, char_generator) |> List.to_string

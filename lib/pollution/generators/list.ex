@@ -32,15 +32,10 @@ defmodule Pollution.Generator.List do
   
   Otherwise return a random value according to the generator constraints.
   """
-  def next_value(type, locals) do
-    case type.must_have do
-  
-      [ h | t ] ->
-        { h, %State{type | must_have: t} }
-  
-      _ ->
-        populate_list(type, locals)
-    end
+  def next_value(state, locals) do
+    G.after_emptying_must_have(state, fn (state) ->
+      populate_list(state, locals)
+    end)
   end
 
 

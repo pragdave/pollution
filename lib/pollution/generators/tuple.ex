@@ -1,6 +1,6 @@
 defmodule Pollution.Generator.Tuple do
 
-  alias Pollution.{State, Util, VG}
+  alias Pollution.{State, VG}
   alias Pollution.Generator, as: G
 
   @defaults %State{
@@ -33,21 +33,12 @@ defmodule Pollution.Generator.Tuple do
 
 #    type = update_with_derived_values(type, locals)
 
-    case state.must_have do
-
-      [ h | t ] ->
-        { h, %State{state | must_have: t} }
-
-      _ ->
-        { list, list_state } = G.next_value(state.extra.delegate, locals)
-        if list == 0 do
-          IO.puts state.extra.delegate
-          IO.inspect list
-        end
-        val = List.to_tuple(list)
-        state = update_delegate(state, list_state)
-        {val, state}
-    end
+    G.after_emptying_must_have(state, fn (state) ->
+      { list, list_state } = G.next_value(state.extra.delegate, locals)
+      val   = List.to_tuple(list)
+      state = update_delegate(state, list_state)
+      {val, state}
+    end)
   end
 
 
