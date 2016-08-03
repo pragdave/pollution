@@ -73,3 +73,33 @@ defmodule Pollution.State do
   def maybe_wrap_in_list(v), do: [v]
 
 end
+
+defimpl String.Chars, for: Pollution.State do
+
+  def to_string(val) do
+    [
+      "\nGenerator: ",
+      val.type |> Atom.to_string |> String.split(".") |> Enum.reverse |> hd,
+      "(min: #{inspect val.min}, max: #{inspect val.max})\n",
+      "must have: #{inspect val.must_have}\n",
+      children(val.child_types),
+      last_value(val.last_value),
+    ]
+    |> Enum.join
+  end
+
+  defp children([]), do: ""
+
+  defp children(kids) do
+    "children: #{kids |> Enum.map(&a_child/1) |> Enum.join}\n"
+  end
+
+  defp a_child(child) do
+    Regex.replace(~r/\n/, __MODULE__.to_string(child), "\n    ")
+  end
+
+  defp last_value(nil), do: ""
+  defp last_value(val) do
+    "value:     #{inspect val}"
+  end
+end

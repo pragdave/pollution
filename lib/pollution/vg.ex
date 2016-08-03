@@ -1,6 +1,6 @@
 defmodule Pollution.VG do
 
-  alias Pollution.Generator.{Any, Choose, Float, Int, List, Seq, String, Value}
+  alias Pollution.Generator.{Any, Choose, Float, Int, List, Seq, String, Tuple, Value}
   alias Pollution.State
 
 #  def any(gen_list), do: Any.create(gen_list)
@@ -58,9 +58,12 @@ defmodule Pollution.VG do
 
   def string(options \\ []), do: String.create(options)
 
+  def tuple(options \\ []),  do: Tuple.create(options)
+
   def value(val) do
     Value.create(value: val)
   end
+
 
 
 
