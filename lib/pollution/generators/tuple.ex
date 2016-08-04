@@ -1,5 +1,7 @@
 defmodule Pollution.Generator.Tuple do
 
+  @moduledoc false
+
   alias Pollution.{State, VG}
   alias Pollution.Generator, as: G
 

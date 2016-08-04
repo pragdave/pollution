@@ -1,5 +1,7 @@
 defmodule Pollution.Generator.Atom do
 
+  @moduledoc false
+
   alias Pollution.{State, Util, VG}
   alias Pollution.Generator, as: G
 

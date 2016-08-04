@@ -1,5 +1,7 @@
 defmodule Pollution.Generator do
 
+  @moduledoc false
+
   alias Pollution.State
 
   @type state :: Pollution.Params.t

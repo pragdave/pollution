@@ -1,5 +1,7 @@
 defmodule Pollution.Generator.Seq do
 
+  @moduledoc false
+
   @behaviour Pollution.Generator
   
   alias Pollution.State

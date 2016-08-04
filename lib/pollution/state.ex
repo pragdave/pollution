@@ -1,5 +1,7 @@
 defmodule Pollution.State do
 
+  @moduledoc false
+
   defstruct(
     type:         __MODULE__,
     last_value:   nil,

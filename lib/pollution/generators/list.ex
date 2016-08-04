@@ -1,5 +1,7 @@
 defmodule Pollution.Generator.List do
 
+  @moduledoc false
+
   alias Pollution.State
   alias Pollution.Generator, as: G
 

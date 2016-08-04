@@ -3,7 +3,7 @@ defmodule Generator.AtomTest do
   use ExUnit.Case
 
   alias  Pollution.Generator, as: G
-  import Pollution.VG, only: [ atom: 0, atom: 1 ]
+  import Pollution.VG, only: [ atom: 1 ]
 
   def run_test(options, test_code) do
     atom(options)

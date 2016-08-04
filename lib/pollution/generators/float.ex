@@ -1,8 +1,11 @@
 defmodule Pollution.Generator.Float do
 
+  @moduledoc false
+
   alias Pollution.State
 
   defmodule Limits do
+    @moduledoc false
     def min(), do: min(1.0, 2.0, 2.0)
     def min(current, current, last2),  do: last2
     def min(current, last, _last2),    do: min(current/2.0, current, last)

@@ -14,7 +14,12 @@ defmodule Pollution.Mixfile do
   ]
 
   @deps [
-    {:ex_doc, ">= 0.0.0", only: :dev}
+    {:ex_doc, ">= 0.0.0", only: :dev }
+  ]
+
+  @docs [
+    extras: [ "README.md" ],
+    main:   "Pollution"
   ]
 
   @project [
@@ -30,7 +35,8 @@ defmodule Pollution.Mixfile do
     keyword list with random keys and values. Constraints can be applied at
     all levels.
     """,
-    package:         @package
+    package:         @package,
+    docs:            @docs
   ]
 
   @application []
