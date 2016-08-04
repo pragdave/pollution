@@ -1,32 +1,39 @@
+
 defmodule Pollution.Mixfile do
   use Mix.Project
 
-  def project do
-    [app: :pollution,
-     version: "0.1.0",
-     elixir: "~> 1.3",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps()]
-  end
+  @package [
+    licenses: ["mit"],
+    maintainers: ["Dave Thomas (pragdave) <dave@pragdave.me>"],
+    links:       %{
+      "Github" => "https://github.com/pragdave/pollution",
+      "Docs"   => "https://hexdocs.pm/pollution"
+    },
+  ]
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
-  def application do
-    [applications: [:logger]]
-  end
+  @deps []
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
-  defp deps do
-    []
-  end
+  @project [
+    app:             :pollution,
+    version:         "0.1.0",
+    elixir:          "~> 1.3",
+    build_embedded:  Mix.env == :prod,
+    start_permanent: Mix.env == :prod,
+    deps:            @deps,
+    description:     """
+    Construct streams of values by specifying composable generator functions.
+    For example list(tuple(like: {atom, string})) will generate a random length
+    keyword list with random keys and values. Constraints can be applied at
+    all levels.
+    """,
+    package:         @package
+  ]
+
+  @application []
+
+  ############################################################
+
+  def project,     do: @project
+  def application, do: @application
+
 end
