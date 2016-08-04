@@ -1,9 +1,39 @@
 defmodule Pollution.VG do
 
-  alias Pollution.Generator.{Any, Choose, Float, Int, List, Seq, String, Tuple, Value}
+  alias Pollution.Generator.{Any, Atom, Choose, Float, Int, List,
+                             Seq, String, Tuple, Value}
   alias Pollution.State
 
 #  def any(gen_list), do: Any.create(gen_list)
+
+
+  @docs """
+  Return a stream of atoms. The characters in the atom are drawn from
+  the ASCII printable set (space through ~).
+
+  ## Example:
+
+      iex> import Pollution.{Generator, VG}
+      iex> atom(max: 10) |> as_stream |> Enum.take(5)
+      [:"", :"Kv0{LGp", :"?0HX\"y", :ad, :"DrS=t(Q"]
+
+  ## Options
+
+  * `min:` _length_
+
+    The minimum length of an atom that will be generated (default: 0).
+
+  * `max:` _length_
+
+    The maximum length of an atom that will be generated (default: 255).
+
+  * `must_have:` [ _value,_ … ]
+
+    Values that _must be_ included in the results. There are no must-have
+    vaules by default.
+
+  """
+  def atom(options \\ []), do: Atom.create(options)
 
   @doc """
   Return a stream of random booleans (`true` or `false`).
@@ -24,7 +54,7 @@ defmodule Pollution.VG do
         iex> choose(from: [ int(min: 3, max: 7), bool ]) |> as_stream |> Enum.take(5)
         [6, false, 4, true, true]
   """
-  def choose(options),    do: Choose.create(options)
+  def choose(options), do: Choose.create(options)
 
   @doc """
   Return a stream of random floating point numbers.
@@ -137,6 +167,74 @@ defmodule Pollution.VG do
   """
   def nonnegative_int,    do: Int.create(min: 0)
 
+  @doc """
+  Return a stream of lists. Each list will have a random length (within limits),
+  and each element in each list will be randomly chosen from the specified types.
+
+  ## Example
+
+      iex> import Pollution.{Generator, VG}
+      iex> list(of: bool, max: 7) |> as_stream|> Enum.take(5)
+      [
+       [],
+       [false, false, false],
+       [false, true, true, false, true],
+       [false, true, true, true, true, false, true],
+       [true, true, false, false, false]
+      ]
+
+  There are a few special-case constructors:
+
+  * `list(length)`
+
+    Return lists of the given length
+
+  * `list(generator)`
+
+    Return lists whose elements are created by _generator_
+
+        iex> list(bool) |> as_stream|> Enum.take(5)
+
+  Otherwise, pass options:
+
+  * `min:` _length_
+
+    Minimum length of the lists returned. Default 0
+
+  * `max:` _length_
+
+    Maximum length of the lists returned. Default 100
+
+  * `must_have:` [ _value_, … ]
+
+    Values that must be returned. Defaults to returning an empty list
+    (so the parameter is `must_have: [ [] ]` if the minimum length is
+    zero, nothing otherwise.
+
+
+  * `of:` _generator_
+
+    Specifies the generator used to populate the lists.
+
+    ## Examples
+
+        iex> import Pollution.{Generator, VG}
+
+        iex> list(of: int, min: 1, max: 5) |> as_stream |> Enum.take(4)
+        [[0, -1, 1, -546], [442], [150], [-836, 540, -979]]
+
+        iex> list(of: int, min: 1, max: 5) |> as_stream |> Enum.take(4)
+        [[0], [-1, 1, 984, -206], [-246], [433, 125, -757]]
+
+        iex> list(of: choose(from: [value(1), value(2)]), min: 1, max: 5)
+        ...>         |> as_stream |> Enum.take(4)
+        [[2], [1, 1, 2], [2, 2, 1, 1, 1], [2, 2, 1]]
+
+        iex> list(of: seq(of: [value(1), value(2)]), min: 1, max: 5)
+        ...>         |> as_stream |> Enum.take(4)
+        [[1, 2], [1, 2, 1, 2], [1], [2, 1]]
+
+  """
 
   def list(), do: list([])
 
@@ -156,14 +254,47 @@ defmodule Pollution.VG do
   end
 
 
+  @doc """
+  Randomly chooses a generator from the list, and then returns a stream of
+  values that it produces. This choice is made only once—call `pick_one`
+  again to get a different result.
+
+  ## Examples
+
+      iex> import Pollution.{Generator, VG}
+      iex> stream = pick_one(from: [int, bool]) |> as_stream
+      iex> Enum.take(stream, 5)
+      [0, -1, 1, -223, 72]
+      iex> Enum.take(stream, 5)
+      [0, -1, 1, -553, 847]
+      iex> Enum.take(stream, 5)
+      [0, -1, 1, -518, -692]
+      iex> Enum.take(stream, 5)
+      [0, -1, 1, 580, 668]
+      iex> Enum.take(stream, 5)
+      [0, -1, 1, -989, -353]
+      iex> stream = pick_one(from: [int, bool]) |> as_stream
+      iex> Enum.take(stream, 5)
+      [true, false, false, false, false]
+      iex> Enum.take(stream, 5)
+      [false, true, false, false, false]
+  """
 
   def pick_one(options) do
-    gen = options[:from] |> as_list |> Enum.random
-    { val, _ } = Pollution.Generator.next_value(gen, [])
-    value(val)
+    options[:from] |> as_list |> Enum.random
   end
 
 
+  @doc """
+  Give `seq` a list of generators (using the `of:` option).
+  It will cycle through these as it streams values.
+
+  ## Examples
+
+      iex> import Pollution.{Generator, VG}
+      iex> seq(of: [int, bool, float]) |> as_stream |> Enum.take(10)
+      [0, true, 0.0, -1, true, -1.0, 1, true, 1.0, -702]
+  """
 
   def seq(options) do
     options
@@ -171,10 +302,92 @@ defmodule Pollution.VG do
     |> Seq.create
   end
 
+  @doc """
+  Return a stream of strings of randomly varying length.
+
+  ## Examples
+
+      iex> import Pollution.{Generator, VG}
+      iex> string(max: 4) |> as_stream |> Enum.take(5)
+      ["", " ", "墍勧", "㘃牸ྥ姷", ""]
+      iex> string(chars: :digits, max: 4) |> as_stream |> Enum.take(5)
+      ["33", "", "7", "6223", "55"]
+
+  ## Options
+
+  * `min:` _length_
+
+     The minimum length of the returned string (default 0)
+
+  * `max:` _length_
+
+     The maximum length of the returned string (default 300)
+
+  * `chars: :ascii | :digits | :lower | :printable | :upper | :utf`
+
+     The set of characters that may be included in the result:
+
+     | :ascii     |  0..127     |
+     | :digits    |  ?0..?9     |
+     | :lower     |  ?a..?z     |
+     | :printable |  32..126    |
+     | :upper     |  ?A..?Z     |
+     | :utf       |  0..0xd7af  |
+
+     The default is `:utf8`.
+
+  * `must_have:` _list_
+
+    A list of strings that must be in the result stream. Defaults to `["", "␠"]`,
+    filtered by the maximum and minimum lengths.
+
+
+  """
 
   def string(options \\ []), do: String.create(options)
 
+  @doc """
+  Generate a stream of tuples. The default is to create tuples of varying sizes
+  with varying content, which is unlikely to be useful. You'll more likely want
+  to use the `like:` option, which sets a template for the tuples.
+
+  ## Example
+
+      iex> import Pollution.{Generator, VG}
+      iex> tuple(like: { value("insert"), string(chars: :upper, max: 10)}) |>
+      ...> as_stream |> Enum.take(3)
+      [{"insert", "M"}, {"insert", "GFOHZNDER"}, {"insert", "FCDO"}]
+
+  ## Options
+
+  * `min:` _size_  • `max:` _size_
+
+    Set the minimum and maximum sizes of the returned tuples. The defaults are
+    0 and 6, but this is overridden by the actual size
+    if the `like:` option is specified.
+
+  * `like:` { _template_ }
+
+    A template of generators used to fill the tuple. The generated tuples will
+    have the same size as the template, and each element wil be generated from
+    the corresponding generator in the template. For example, a `Keyword`
+    list could be generated using
+
+        iex> list(of: tuple(like: { atom, string(chars: lower, max: 10) })) |> as_stream |> Enum.take(5)
+
+  """
   def tuple(options \\ []),  do: Tuple.create(options)
+
+  @doc """
+  Generates an infinite stream where each element is its parameter.
+
+  ## Example
+
+      iex> import Pollution.{Generator, VG}
+      iex> value("nom") |> as_stream |> Enum.take(3)
+      ["nom", "nom", "nom"]
+
+  """
 
   def value(val) do
     Value.create(value: val)

@@ -36,10 +36,11 @@ defmodule Pollution.Generator.String do
 
   defp character_range_for(nil),        do: {false, 0..0xd7af}
   defp character_range_for(:ascii),     do: {false, 0..127}
-  defp character_range_for(:printable), do: {true, 32..126}
   defp character_range_for(:digits),    do: {true, ?0..?9}
-  defp character_range_for(:upper),     do: {true, ?A..?Z}
   defp character_range_for(:lower),     do: {true, ?a..?z}
+  defp character_range_for(:printable), do: {true, 32..126}
+  defp character_range_for(:upper),     do: {true, ?A..?Z}
+  defp character_range_for(:utf),       do: {false, 0..0xd7af}
   defp character_range_for(%Range{} = range) do
     {true, range}
   end
