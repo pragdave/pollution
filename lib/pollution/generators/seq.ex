@@ -22,4 +22,6 @@ defmodule Pollution.Generator.Seq do
     { value, %State{ state | child_types: rotated } }
   end
 
+  def update_constraints(state), do: state
+
 end

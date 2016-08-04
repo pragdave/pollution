@@ -9,7 +9,6 @@ defmodule Pollution.Mixfile do
     maintainers: ["Dave Thomas (pragdave) <dave@pragdave.me>"],
     links:       %{
       "Github" => "https://github.com/pragdave/pollution",
-      "Docs"   => "https://hexdocs.pm/pollution"
     },
   ]
 

@@ -21,20 +21,19 @@ defmodule Pollution.Generator.String do
     @defaults
     |> add_character_range_to_state(options)
     |> State.add_min_max_length_to_state(options)
-    |> trim_must_have_to_range
+    |> update_constraints
   end
 
 
   defp add_character_range_to_state(state, options) do
     with {remove_must_have, range} = character_range_for(options[:chars]) do
-      if remove_must_have do
-        State.add_to_state(state, :must_have, [])
-      else
-        state
-      end
+      maybe_remove_must_have(remove_must_have, state)
       |> State.add_to_state(:extra, %{ char_range: range })
     end
   end
+
+  defp maybe_remove_must_have(false, state), do: state
+  defp maybe_remove_must_have(true, state),  do: %State{ state | must_have: [] }
 
   defp character_range_for(nil),        do: {false, 0..0xd7af}
   defp character_range_for(:ascii),     do: {false, 0..127}
@@ -51,17 +50,6 @@ defmodule Pollution.Generator.String do
   end
 
 
-  defp trim_must_have_to_range(state) do
-    min = state.min
-    max = state.max
-
-    must_have = Enum.filter(state.must_have, fn str ->
-      String.length(str) in min..max
-    end)
-
-    State.add_to_state(state, :must_have, must_have)
-  end
-
   @doc """
   Return a tuple containing the next value for this type, along with a
   potentially updated type state.
@@ -69,14 +57,15 @@ defmodule Pollution.Generator.String do
   The next value is chosen randomly from generator_constraints.list
   """
   def next_value(state, _locals) do
-
-#    type = update_with_derived_values(type, locals)
-
     G.after_emptying_must_have(state, fn (state)->
       len = Util.rand_between(state.min, state.max)
       val = generate_chars(state, len)
       {val, state}
     end)
+  end
+
+  def update_constraints(state) do
+    State.trim_must_have_to_range_based_on(state, &String.length/1)
   end
 
   defp generate_chars(_, 0), do: ""

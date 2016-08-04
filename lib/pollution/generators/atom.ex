@@ -17,9 +17,9 @@ defmodule Pollution.Generator.Atom do
 
   def create(options) do
     @defaults
+    |> State.add_derived_to_state(options)
     |> State.add_min_max_length_to_state(options)
     |> create_delegate(options)
-#    |> trim_must_have_to_range
   end
 
 
@@ -31,17 +31,21 @@ defmodule Pollution.Generator.Atom do
   The next value is chosen randomly from generator_constraints.list
   """
   def next_value(state, locals) do
-
-#    type = update_with_derived_values(type, locals)
     G.after_emptying_must_have(state, fn (state) ->
-        { list, list_state } = G.next_value(state.extra.delegate, locals)
-        val = List.to_atom(list)
-        state = update_delegate(state, list_state)
-        {val, state}
+      { list, list_state } = G.next_value(state.extra.delegate, locals)
+      val = List.to_atom(list)
+      state = update_delegate(state, list_state)
+      {val, state}
     end)
   end
 
+  def update_constraints(state) do
+    State.trim_must_have_to_range_based_on(state, &atom_length/1)
+  end
 
+  defp atom_length(atom) do
+    atom |> Atom.to_string |> String.length
+  end
 
   defp create_delegate(state, options) do
     must_have = convert_must_have(options[:must_have], state.must_have)

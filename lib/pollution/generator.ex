@@ -10,10 +10,14 @@ defmodule Pollution.Generator do
 
   @callback next_value(state, Keyword.t) :: { any, state }
 
+  @callback update_constraints(state) :: state
+
 
 
   def next_value(state, locals \\ []) do
-    state.type.next_value(state, locals)
+    state
+    |> State.update_with_derived_values(locals)
+    |> state.type.next_value(locals)
   end
 
   def as_stream(state, locals \\ []) do

@@ -27,6 +27,9 @@ defmodule Pollution.Generator.Choose do
     { value, %State{ state | child_types: updated_list } }
   end
 
+  def update_constraints(state), do: state
+
+
   defp to_map(list) when is_list(list) do
     list |> Enum.with_index |> Enum.into(%{}, &tuple_flip/1)
   end

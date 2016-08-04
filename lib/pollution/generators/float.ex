@@ -3,6 +3,7 @@ defmodule Pollution.Generator.Float do
   @moduledoc false
 
   alias Pollution.State
+  alias Pollution.Generator, as: G
 
   defmodule Limits do
     @moduledoc false
@@ -30,7 +31,7 @@ defmodule Pollution.Generator.Float do
     |> State.add_derived_to_state(options)
     |> State.add_min_max_to_state(options)
     |> State.add_must_have_to_state(options)
-    |> State.trim_must_have_to_range(options)
+    |> update_constraints
   end
 
 
@@ -44,35 +45,13 @@ defmodule Pollution.Generator.Float do
   Otherwise return a random value according to the generator constraints.
   """
   def next_value(state, locals) do
-
-    state = update_with_derived_values(state, locals)
-
-    case state.must_have do
-
-      [ h | t ] ->
-        { h, %State{state | must_have: t} }
-
-      _ ->
-        val = :rand.uniform() * (state.max - state.min) + state.min
-        {val, state}
-    end
+    G.after_emptying_must_have(state, fn state ->
+      val = :rand.uniform() * (state.max - state.min) + state.min
+      {val, state}
+    end)
   end
 
-
-  def update_with_derived_values(state=%{derived: derived}, locals) when is_list(derived) do
-    Enum.map(derived, fn {k,v} -> { k, v.(locals) } end)
-    |> update_state_with_derived_options(state)
+  def update_constraints(state) do
+    state |> State.trim_must_have_to_range
   end
-
-  def update_with_derived_values(state, _) do
-    state
-  end
-
-
-  defp update_state_with_derived_options(derived, state) do
-    state
-    |> State.add_min_max_to_state(derived)
-    |> State.trim_must_have_to_range(derived)
-  end
-
 end

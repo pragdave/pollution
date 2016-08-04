@@ -2,6 +2,8 @@ defmodule Pollution.State do
 
   @moduledoc false
 
+  alias Pollution.State
+
   defstruct(
     type:         __MODULE__,
     last_value:   nil,
@@ -52,24 +54,36 @@ defmodule Pollution.State do
   def add_to_state(state, key, value) when is_atom(key) do
     Map.put(state, key, value)
   end
-  # 
-  # def add_to_constraints(params, _key, nil), do: params
-  # def add_to_constraints(params, key, value) when is_atom(key) do
-  #   constraints = params.generator_constraints
-  #   constraints = Map.put(constraints, key, value)
-  #   %{ params | generator_constraints: constraints }
-  # end
-  # 
-  # 
-  def trim_must_have_to_range(state, _options) do
+
+
+  def update_with_derived_values(state=%{derived: derived}, locals)
+  when is_list(derived) and length(derived) > 0 do
+    Enum.reduce(derived, state, fn {k,v}, state ->
+      Map.put(state, k, v.(locals))
+    end)
+    |> state.type.update_constraints
+  end
+
+  def update_with_derived_values(state, _) do
+    state
+  end
+
+  def trim_must_have_to_range(state) do
+    trim_must_have_to_range_based_on(state, &(&1))
+  end
+
+  def trim_must_have_to_range_based_on(state, func) do
     min = state.min
     max = state.max
     updated_must_have =
       state.must_have
-      |> Enum.filter(fn val -> val >= min && val <= max end)
+    |> Enum.filter(fn val ->
+      with limit = func.(val),
+      do:  limit >= min && limit <= max
+    end)
     Map.put(state, :must_have, updated_must_have)
   end
-
+  
   def maybe_wrap_in_list(nil), do: nil
   def maybe_wrap_in_list(l) when is_list(l), do: l
   def maybe_wrap_in_list(v), do: [v]

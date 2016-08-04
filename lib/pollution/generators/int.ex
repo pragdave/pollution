@@ -19,10 +19,10 @@ defmodule Pollution.Generator.Int do
 
     @state
 #    |> add_distribution_to_params(options)
-#    |> Type.add_derived_to_params(options)
+    |> State.add_derived_to_state(options)
     |> State.add_min_max_to_state(options)
     |> State.add_must_have_to_state(options)
-    |> State.trim_must_have_to_range(options)
+    |> update_constraints()
   end
 
 
@@ -35,10 +35,7 @@ defmodule Pollution.Generator.Int do
 
   Otherwise return a random value according to the generator constraints.
   """
-  def next_value(state, locals) do
-
-    state = update_with_derived_values(state, locals)
-
+  def next_value(state, _locals) do
     G.after_emptying_must_have(state, fn (state) ->
       val = Util.rand_between(state.min, state.max)
       {val, state}
@@ -46,21 +43,9 @@ defmodule Pollution.Generator.Int do
   end
 
 
-  def update_with_derived_values(state=%State{derived: derived}, locals)
-  when is_list(derived) do
-    Enum.map(derived, fn {k,v} -> { k, v.(locals) } end)
-    |> update_state_with_derived_options(state)
-  end
 
-  def update_with_derived_values(state, _) do
-    state
-  end
-
-
-  defp update_state_with_derived_options(derived, state) do
-    state
-    |> State.add_min_max_to_state(derived)
-    |> State.trim_must_have_to_range(derived)
+  def update_constraints(state) do
+    State.trim_must_have_to_range(state)
   end
 
   # If the constraints are bounded, then use a uniform distribution

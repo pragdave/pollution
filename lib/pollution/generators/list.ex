@@ -40,6 +40,9 @@ defmodule Pollution.Generator.List do
     end)
   end
 
+  def update_constraints(state) do
+    State.trim_must_have_to_range_based_on(state, &length/1)
+  end
 
   defp populate_list(s = %State{}, locals) do
     len = choose_length(s.min, s.max)

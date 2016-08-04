@@ -85,6 +85,36 @@ defmodule Generator_Constraints.FloatTest do
     end
   end
 
+  describe "derived values" do
+    test "are looked up initially" do
+      float(derived: [ min: fn locals -> locals[:a] end], max: 12)
+      |> G.as_stream([a: 10])
+      |> Enum.take(100)
+      |> Enum.each(fn v -> assert v >= 10.0 && v <= 12.0 end)
+    end
+
+
+    test "prune must have list" do
+      float(derived: [ min: fn locals -> locals[:a] end], max: 12, must_have: [8, 9, 10, 100])
+      |> G.as_stream([a: 10])
+      |> Enum.take(100)
+      |> Enum.each(fn v -> assert v >= 10.0 && v <= 12.0 end)
+    end
+
+    test "recalculate each time" do
+      f = float(derived: [ min: fn locals -> locals[:a] end], max: 12)
+      { v, f1 } = G.next_value(f, [ a: 10 ])
+
+      assert v >= 10.0 && v <= 12.0
+      assert f1.min == 10.0
+
+      { v, f2 } = G.next_value(f1, [ a: 12 ])
+
+      assert v == 12
+      assert f2.min == 12.0
+    end
+  end
+  
   #
   # describe "values returned" do
   #   test "include must_have values" do

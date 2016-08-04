@@ -93,5 +93,36 @@ defmodule IntTest do
       assert abs(mean - 30) < 2
     end
   end
+
+  describe "derived values" do
+    test "are looked up initially" do
+      int(derived: [ min: fn locals -> locals[:a] end], max: 12)
+      |> G.as_stream([a: 10])
+      |> Enum.take(100)
+      |> Enum.each(fn v -> assert v in 10..12 end)
+    end
+
+
+    test "prune must have list" do
+      int(derived: [ min: fn locals -> locals[:a] end], max: 12, must_have: [8, 9, 10, 100])
+      |> G.as_stream([a: 10])
+      |> Enum.take(100)
+      |> Enum.each(fn v -> assert v in 10..12 end)
+    end
+
+    test "recalculate each time" do
+      i = int(derived: [ min: fn locals -> locals[:a] end], max: 12)
+      { v, i1 } = G.next_value(i, [ a: 10 ])
+
+      assert v in 10..12
+      assert i1.min == 10
+
+      { v, i2 } = G.next_value(i1, [ a: 12 ])
+
+      assert v == 12
+      assert i2.min == 12
+    end
+  end
+
 end
 

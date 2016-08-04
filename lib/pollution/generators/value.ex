@@ -17,4 +17,7 @@ defmodule Pollution.Generator.Value do
   def next_value(state, _locals) do
     { state.last_value, state }
   end
+
+  def update_constraints(state), do: state
+
 end
