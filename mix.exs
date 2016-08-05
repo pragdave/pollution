@@ -2,7 +2,7 @@
 defmodule Pollution.Mixfile do
   use Mix.Project
 
-  @version    "0.1.1"
+  @version    "0.1.2"
 
   @package [
     licenses: ["mit"],
