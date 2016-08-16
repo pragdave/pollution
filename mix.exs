@@ -5,7 +5,7 @@ defmodule Pollution.Mixfile do
   @version    "0.1.2"
 
   @package [
-    licenses: ["mit"],
+    licenses:    ["mit"],
     maintainers: ["Dave Thomas (pragdave) <dave@pragdave.me>"],
     links:       %{
       "Github" => "https://github.com/pragdave/pollution",
