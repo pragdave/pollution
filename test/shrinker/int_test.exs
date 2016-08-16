@@ -5,8 +5,8 @@ defmodule Shrinker.IntTest do
 
   describe "binary chop" do
 
-    def env(code) do
-      %{ locals: %{ name: 0 }, code: code }
+    def env(code, state \\ %{}, locals \\ %{ name: 0 }) do
+      { code, state, locals }
     end
 
     test "stops when min = max" do
@@ -54,7 +54,7 @@ defmodule Shrinker.IntTest do
     end
 
 
-    test "finds value in when current is negative" do
+    test "finds value when current is negative" do
       max = 40
       min = -10
       sp = Int.shrink_params(%{min: min, max: max}, 5)
