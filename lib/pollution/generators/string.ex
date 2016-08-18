@@ -4,6 +4,7 @@ defmodule Pollution.Generator.String do
 
   alias Pollution.{State, Util}
   alias Pollution.Generator, as: G
+  alias Pollution.Shrinker.Params, as: SP
 
   @defaults %State{
     type:       __MODULE__,
@@ -77,4 +78,44 @@ defmodule Pollution.Generator.String do
     Enum.map(1..len, char_generator) |> List.to_string
   end
 
+
+  ###################
+  # Shrinking stuff #
+  ###################
+
+  def params_for_shrink(%{ min: min, max: max }, current) do
+    %SP{
+      low:       min,   # lengths
+      high:      max,
+      current:   current,
+      shrink:    &shrink_one/1,
+      backtrack: &shrink_backtrack/1
+    }
+  end
+
+
+  def shrink_one(sp = %SP{firsttime: true, current: current}) do
+    if (current |> String.to_charlist |> Enum.any?(fn ch -> ch > 127 end)) do
+      with len = String.length(current),
+           new_string = Stream.cycle(?a..?z) |> Enum.take(len) |> List.to_string,
+      do:  %SP{ sp | firsttime: false, current: new_string }
+    else
+      %SP{ sp | firsttime: false }
+    end
+  end
+
+  
+  def shrink_one(sp = %SP{low: low, current: current})
+  when :erlang.size(current) == low do
+    %SP{ sp | done: true }
+  end
+
+  def shrink_one(sp = %SP{current: << _head :: utf8, rest :: binary >>})  do
+    %SP{ sp | current: rest }
+  end
+  
+  def shrink_backtrack(sp = %SP{}) do
+    %SP{ sp | done: true }
+  end
+  
 end

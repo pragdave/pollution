@@ -1,11 +1,12 @@
 defmodule Pollution.Shrinker.Params do
-  defstruct name:      nil,  # the name of this parameter
-            current:   0,    # the current value
-            high:      0,    # the high point of the range to be searched
-            low:       0,    # and the low point
-            shrink:    nil,  # a function to shrink one step
-            backtrack: nil,  # a function to backtrack
-            done:      false # dun shrikin'
+  defstruct name:      nil,   # the name of this parameter
+            current:   0,     # the current value
+            high:      0,     # the high point of the range to be searched
+            low:       0,     # and the low point
+            shrink:    nil,   # a function to shrink one step
+            backtrack: nil,   # a function to backtrack
+            firsttime: true,  # only true on the first shrink
+            done:      false  # dun shrikin'
 
 end
 

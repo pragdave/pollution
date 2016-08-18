@@ -4,6 +4,7 @@ defmodule Pollution.Generator.List do
 
   alias Pollution.State
   alias Pollution.Generator, as: G
+  alias Pollution.Shrinker.Params, as: SP
 
   @defaults %State{
     type:        __MODULE__,
@@ -39,6 +40,37 @@ defmodule Pollution.Generator.List do
       populate_list(state, locals)
     end)
   end
+
+
+
+  ###################
+  # Shrinking stuff #
+  ###################
+
+  def params_for_shrink(%{ min: min, max: max }, current) do
+    %SP{
+      low:       min,   # lengths
+      high:      max,
+      current:   current,
+      shrink:    &shrink_one/1,
+      backtrack: &shrink_backtrack/1
+    }
+  end
+
+
+  def shrink_one(sp = %SP{low: low, current: current}) when length(current) == low do
+    %SP{ sp | done: true }
+  end
+
+  def shrink_one(sp = %SP{current: [ head | tail ]})  do
+    %SP{ sp | current: tail }
+  end
+
+  def shrink_backtrack(sp = %SP{}) do
+    %SP{ sp | done: true }
+  end
+
+
 
   def update_constraints(state) do
     State.trim_must_have_to_range_based_on(state, &length/1)

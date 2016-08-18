@@ -4,7 +4,7 @@ defmodule Pollution.Generator.Int do
 
   alias Pollution.{State, Util}
   alias Pollution.Generator, as: G
-    alias Pollution.Shrinker.Params, as: SP
+  alias Pollution.Shrinker.Params, as: SP
 
   @state %State{
     type:       __MODULE__,
