@@ -32,5 +32,6 @@ defmodule Pollution.Generator do
   def after_emptying_must_have(state, other_vals) do
     other_vals.(state)
   end
+
 end
 
