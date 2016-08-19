@@ -4,6 +4,7 @@ defmodule Pollution.Generator.Tuple do
 
   alias Pollution.{State, VG}
   alias Pollution.Generator, as: G
+  alias Pollution.Shrinker.Params, as: SP
 
   @defaults %State{
     type:       __MODULE__,
@@ -43,6 +44,43 @@ defmodule Pollution.Generator.Tuple do
     end)
   end
 
+
+  ###################
+  # Shrinking stuff #
+  ###################
+
+  def params_for_shrink(%{ min: min, max: max }, current) do
+    %SP{
+      low:       min,   # lengths
+      high:      max,
+      current:   current,
+      shrink:    &shrink_one/1,
+      backtrack: &shrink_backtrack/1
+    }
+  end
+
+
+  def shrink_one(sp = %SP{low: low, current: current})
+  when tuple_size(current) == low do
+    %SP{ sp | done: true }
+  end
+
+  def shrink_one(sp = %SP{current: current})  when tuple_size(current) == 0 do
+    %SP{ sp | done: true }
+  end
+
+  def shrink_one(sp = %SP{current: current})  do
+    %SP{ sp | current: current |> Tuple.to_list |> tl |> List.to_tuple }
+  end
+
+  def shrink_backtrack(sp = %SP{}) do
+    %SP{ sp | done: true }
+  end
+
+
+  ###########
+  # Helpers #
+  ###########
 
 
   defp create_delegate(state, options) do

@@ -4,6 +4,7 @@ defmodule Pollution.Generator.Atom do
 
   alias Pollution.{State, Util, VG}
   alias Pollution.Generator, as: G
+  alias Pollution.Shrinker.Params, as: SP
 
   @defaults %State{
     type:       __MODULE__,
@@ -70,4 +71,36 @@ defmodule Pollution.Generator.Atom do
   defp convert_one_must_have(str)  when is_binary(str), do: String.to_charlist(str)
   defp convert_one_must_have(list) when is_list(list),  do: list
 
+
+  ###################
+  # Shrinking stuff #
+  ###################
+
+  def params_for_shrink(%{ min: min, max: max }, current) do
+    %SP{
+      low:       min,   # lengths
+      high:      max,
+      current:   current,
+      shrink:    &shrink_one/1,
+      backtrack: &shrink_backtrack/1
+    }
+  end
+
+
+  def shrink_one(sp = %SP{low: low, current: current}) do
+    chars = Atom.to_charlist(current)
+    len   = length(chars)
+
+    cond do
+      len == low ->
+        %SP{ sp | done: true }
+      true ->
+        %SP{ sp | current: tl(chars) |> List.to_atom }
+    end
+  end
+
+  def shrink_backtrack(sp = %SP{}) do
+    %SP{ sp | done: true }
+  end
+  
 end

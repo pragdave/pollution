@@ -19,12 +19,12 @@ defmodule Pollution.Generator.Choose do
   def next_value(state = %State{child_types: list}, locals) do
 
     index = :rand.uniform(Enum.count(list)) - 1
-    generator = list[index]
+    child = list[index]
 
-    { value, updated_child } = G.next_value(generator, locals)
+    { value, updated_child } = G.next_value(child, locals)
 
     updated_list = Map.put(list, index, updated_child)
-    { value, %State{ state | child_types: updated_list } }
+    { value, %State{ state | child_types: updated_list, last_child: updated_child } }
   end
 
   def update_constraints(state), do: state
@@ -39,4 +39,15 @@ defmodule Pollution.Generator.Choose do
   defp tuple_flip({v,i}), do: {i,v}
 
   @compile {:inline, tuple_flip: 1}
+
+
+  ###################
+  # Shrinking stuff #
+  ###################
+
+  # delegate shrinking to the last type we chose
+  def params_for_shrink(state = %State{ last_child: last_child }, current) do
+    last_child.type.params_for_shrink(state, current)
+  end
+
 end

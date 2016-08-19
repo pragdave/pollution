@@ -9,6 +9,7 @@ defmodule Pollution.State do
     last_value:   nil,
     must_have:    [ ],
     child_types:  [ ],
+    last_child:   nil,
     derived:      [ ],
     min:          nil,
     max:          nil,

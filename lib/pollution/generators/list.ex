@@ -62,7 +62,7 @@ defmodule Pollution.Generator.List do
     %SP{ sp | done: true }
   end
 
-  def shrink_one(sp = %SP{current: [ head | tail ]})  do
+  def shrink_one(sp = %SP{current: [ _head | tail ]})  do
     %SP{ sp | current: tail }
   end
 

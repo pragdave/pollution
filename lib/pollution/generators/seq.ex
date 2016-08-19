@@ -19,9 +19,20 @@ defmodule Pollution.Generator.Seq do
   def next_value(state = %State{child_types: [ h | t]}, locals) do
     { value, updated_child } = G.next_value(h, locals)
     rotated = Enum.reverse( [ updated_child | Enum.reverse(t)])
-    { value, %State{ state | child_types: rotated } }
+    { value, %State{ state | child_types: rotated, last_child: updated_child } }
   end
 
   def update_constraints(state), do: state
+
+
+  ###################
+  # Shrinking stuff #
+  ###################
+
+  # delegate shrinking to the last type we chose
+  def params_for_shrink(state = %State{ last_child: last_child }, current) do
+    last_child.type.params_for_shrink(state, current)
+  end
+  
 
 end

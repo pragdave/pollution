@@ -30,7 +30,8 @@ defmodule Pollution.Shrinker do
     current_state = state[param_name]
     current_value = locals[param_name]
     params = current_state.type.params_for_shrink(current_state, current_value)
-             |> Map.put(:name, param_name)
+    params = Map.put(params, :name, param_name)
+
     shrink(params, code, locals)
   end
 
