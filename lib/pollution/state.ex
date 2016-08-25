@@ -120,3 +120,7 @@ defimpl String.Chars, for: Pollution.State do
     "value:     #{inspect val}"
   end
 end
+
+# defimpl Inspect, for: Pollution.State do
+#   def inspect(dict, _opts), do: to_string(dict)
+# end

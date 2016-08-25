@@ -1,6 +1,6 @@
 defmodule Pollution.VG do
 
-  alias Pollution.Generator.{Any, Atom, Choose, Float, Int, List,
+  alias Pollution.Generator.{Any, Atom, Choose, Float, Int, List, Map,
                              Seq, String, Tuple, Value}
   alias Pollution.State
 
@@ -253,6 +253,46 @@ defmodule Pollution.VG do
     List.create(min: min, max: max)
   end
 
+
+  @doc """
+  Create maps that either mirror a particular structure or that
+  contain random numbers of elements.
+
+  To create a stream of maps with a given structure, use the `like:`
+  option:
+
+      map(like: %{ name: string, age: int(min:0, max: 130) })
+
+  In this example, the keys are static atoms—each generated map will
+  have these two keys. You can also use generators as keys:
+
+      map(like: %{ atom: string })
+
+  This will generate single element maps, where each element has a
+  random atom as a key and a random string as a value.
+
+  To create a stream of variable size maps, use `of:`, optionally with
+  the `min:` and `max:` options.
+
+      map(of: { atom, string }, min: 3, max: 6)
+
+  This will generate a stream of maps of between 3 and 6 elements
+  each, when each element has an atom as a key and a string as a
+  value.
+
+  You can use generators such as `choose` and `pick_one` to make
+  things more interesting:
+
+      map(of: { atom, choose(from: [string, integer]) }, min: 3, max: 6)
+
+  With this example, some elements will have a string value, and some
+  will have an integer value.
+
+  """
+
+  def map(options) do
+    Map.create(options)
+  end
 
   @doc """
   Randomly chooses a generator from the list, and then returns a stream of

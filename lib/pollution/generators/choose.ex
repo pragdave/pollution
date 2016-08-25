@@ -5,6 +5,7 @@ defmodule Pollution.Generator.Choose do
   @behaviour Pollution.Generator
   
   alias Pollution.State
+  alias Pollution.Util
   alias Pollution.Generator, as: G
 
   @state %State {
@@ -13,7 +14,7 @@ defmodule Pollution.Generator.Choose do
 
   def create(options) when is_list(options) do
     @state
-    |> State.set_param(:child_types, to_map(options[:from]))
+    |> State.set_param(:child_types, Util.list_to_map(options[:from]))
   end
 
   def next_value(state = %State{child_types: list}, locals) do
@@ -30,15 +31,6 @@ defmodule Pollution.Generator.Choose do
   def update_constraints(state), do: state
 
 
-  defp to_map(list) when is_list(list) do
-    list |> Enum.with_index |> Enum.into(%{}, &tuple_flip/1)
-  end
-
-  defp to_map(x), do: to_map([x])
-
-  defp tuple_flip({v,i}), do: {i,v}
-
-  @compile {:inline, tuple_flip: 1}
 
 
   ###################
