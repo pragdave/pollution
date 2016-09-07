@@ -2,7 +2,7 @@ defmodule Pollution.Generator.Atom do
 
   @moduledoc false
 
-  alias Pollution.{State, Util, VG}
+  alias Pollution.{State, VG}
   alias Pollution.Generator, as: G
   alias Pollution.Shrinker.Params, as: SP
 

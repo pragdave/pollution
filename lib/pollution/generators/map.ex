@@ -18,8 +18,7 @@ defmodule Pollution.Generator.Map do
 
   def create(options) do
     options = Enum.into(options, %{})
-
-    @defaults
+    x = @defaults
     |> State.add_min_max_length_to_state(options)
     |> State.add_must_have_to_state(options)
     |> add_element_types_to_state(options)
@@ -114,8 +113,7 @@ defmodule Pollution.Generator.Map do
   defp choose_length(min, max),     do: Pollution.Util.rand_between(min, max)
 
 
-  defp maybe_add_empty_map_to_must_have(
-        state = %{ extra: %{ fixed_content: true }}, _) do
+  defp maybe_add_empty_map_to_must_have(state = %{ extra: %{ fixed_content: true }}, _) do
     %State{ state | must_have: [ ]}
   end
 
@@ -132,7 +130,7 @@ defmodule Pollution.Generator.Map do
 
   def add_element_types_to_state(state, options) do
     like =
-      ( options[:like] || options[:of] || %{ VG.atom(min: 3, max: 20) => VG.string } )
+    ( options[:like] || options[:of] || [{ VG.atom(min: 3, max: 20), VG.string }] )
       |> Enum.map(&element_from_option/1)
       |> Util.list_to_map
 
@@ -146,11 +144,11 @@ defmodule Pollution.Generator.Map do
 
   defp constrain_state_if_like_option(state, true) do
     %State{ state | extra:     %{ fixed_content: true },
-                    must_have: []
+            must_have: []
           }
   end
 
-  defp constrain_state_if_like_option(state, _) do
+  defp constrain_state_if_like_option(state, x) do
     state
   end
 
@@ -165,5 +163,6 @@ defmodule Pollution.Generator.Map do
   defp element_from_option({k, v}) do
     { k, v }
   end
+
 end
 

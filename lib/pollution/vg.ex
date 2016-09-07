@@ -1,10 +1,19 @@
 defmodule Pollution.VG do
 
   alias Pollution.Generator.{Any, Atom, Choose, Float, Int, List, Map,
-                             Seq, String, Tuple, Value}
+                             Seq, String, Struct, Tuple, Value}
   alias Pollution.State
 
-#  def any(gen_list), do: Any.create(gen_list)
+
+  @doc """
+  Generates a stream of values of any of the types: tom, float, int,
+  list, map, string, and tuple. Structs are not included, as they require
+  addition information to create.
+
+  If you need finer control over the types and values returned, see
+  the `choose/2` function.
+  """
+  def any, do: choose(from: [ atom, float, int, list, map, string, tuple ])
 
 
   @docs """
@@ -290,7 +299,7 @@ defmodule Pollution.VG do
 
   """
 
-  def map(options) do
+  def map(options \\ []) do
     Map.create(options)
   end
 
@@ -385,6 +394,43 @@ defmodule Pollution.VG do
   """
 
   def string(options \\ []), do: String.create(options)
+
+  @doc """
+  Generate a stream of structs. Before starting, the generator reflects
+  on the struct that is passed in, looking at the types of the values
+  of each field. It then maps this onto a `map()` generator, using
+  appropriate subgenerators for each of those fields.
+
+  For example, given:
+
+       iex> defmodule MyStruct
+       iex>    defstruct an_atom: :a, an_int: 0, other: nil
+       iex> end
+
+  You could call
+
+      iex> struct(MyStruct)
+
+  As well as passing in the name of a struct, you can pass in
+  an instance:
+
+      iex> struct(%MyStruct{})
+
+  In either case, the result would be a stream of MyStructs, as if you
+  had called
+
+      map(like: %{ an_atom: atom,
+                   an_int:  int,
+                   other:   any,
+                   __struct__: MyStruct)
+
+  If you supply generators to the struct you pass in, these will be
+  used in place of generators for the defaults:
+
+      struct(%MyStruct{an_int: int(min: 20), other: string})
+  """
+
+  def struct(template), do: Struct.create(template)
 
   @doc """
   Generate a stream of tuples. The default is to create tuples of varying sizes
