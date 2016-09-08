@@ -16,7 +16,7 @@ defmodule Pollution.VG do
   def any, do: choose(from: [ atom, float, int, list, map, string, tuple ])
 
 
-  @docs """
+  @doc """
   Return a stream of atoms. The characters in the atom are drawn from
   the ASCII printable set (space through ~).
 
