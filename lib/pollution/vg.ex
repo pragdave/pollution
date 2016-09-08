@@ -6,9 +6,9 @@ defmodule Pollution.VG do
 
 
   @doc """
-  Generates a stream of values of any of the types: tom, float, int,
+  Generates a stream of values of any of the types: atom, float, int,
   list, map, string, and tuple. Structs are not included, as they require
-  addition information to create.
+  additional information to create.
 
   If you need finer control over the types and values returned, see
   the `choose/2` function.
