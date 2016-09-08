@@ -1,6 +1,6 @@
 defmodule Pollution.VG do
 
-  alias Pollution.Generator.{Any, Atom, Choose, Float, Int, List, Map,
+  alias Pollution.Generator.{Atom, Choose, Float, Int, List, Map,
                              Seq, String, Struct, Tuple, Value}
   alias Pollution.State
 

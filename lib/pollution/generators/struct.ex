@@ -13,7 +13,7 @@ defmodule Pollution.Generator.Struct do
     try do
       _ = name.__info__(:module)   # is it a module?
     rescue
-      e in [UndefinedFunctionError] ->
+      _ in [UndefinedFunctionError] ->
         raise "VG.struct(#{inspect name}): parameter is not a Struct"
     end
     create(struct(name))           # yes, assume it's a struct
@@ -30,7 +30,6 @@ defmodule Pollution.Generator.Struct do
   defp meta(s) do
     s |> Map.from_struct |> Enum.map(&generator_for/1)
   end
-
 
 
   # The `generator_for` function converts {k, v} into
@@ -57,6 +56,10 @@ defmodule Pollution.Generator.Struct do
     { struct(state.extra.struct_name, as_map), new_state }
   end
 
+  def update_constraints(state) do
+    State.trim_must_have_to_range_based_on(state, &length/1)
+  end
+  
   ###################
   # Shrinking stuff #
   ###################

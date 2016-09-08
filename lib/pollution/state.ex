@@ -2,8 +2,6 @@ defmodule Pollution.State do
 
   @moduledoc false
 
-  alias Pollution.State
-
   defstruct(
     type:         __MODULE__,
     last_value:   nil,

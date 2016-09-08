@@ -18,7 +18,7 @@ defmodule Pollution.Generator.Map do
 
   def create(options) do
     options = Enum.into(options, %{})
-    x = @defaults
+    @defaults
     |> State.add_min_max_length_to_state(options)
     |> State.add_must_have_to_state(options)
     |> add_element_types_to_state(options)
@@ -64,21 +64,18 @@ defmodule Pollution.Generator.Map do
   end
 
   def shrink_one(sp = %SP{current: current}) when map_size(current) > 0  do
-    %SP{ sp | current: current |> Map.to_list |> tl |> List.to_map }
+    %SP{ sp | current: current |> Map.to_list |> tl |> Map.new }
   end
 
   def shrink_backtrack(sp = %SP{}) do
     %SP{ sp | done: true }
   end
 
-
-
   def update_constraints(state) do
     State.trim_must_have_to_range_based_on(state, &length/1)
   end
 
   defp populate_map(s = %State{ extra: %{ fixed_content: true } }, locals) do
-    len = choose_length(s.min, s.max)
     { map, child_types } = Enum.reduce(s.child_types, {[], s.child_types},
       fn (next_child, { result, child_types }) ->
         { index, {key_gen, val_gen} } = next_child
@@ -148,7 +145,7 @@ defmodule Pollution.Generator.Map do
           }
   end
 
-  defp constrain_state_if_like_option(state, x) do
+  defp constrain_state_if_like_option(state, _x) do
     state
   end
 
