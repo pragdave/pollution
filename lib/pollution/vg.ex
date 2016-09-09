@@ -225,7 +225,7 @@ defmodule Pollution.VG do
 
     Specifies the generator used to populate the lists.
 
-    ## Examples
+  ## Examples
 
         iex> import Pollution.{Generator, VG}
 
