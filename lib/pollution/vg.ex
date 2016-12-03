@@ -120,7 +120,7 @@ defmodule Pollution.VG do
   Return a stream of floats greater than or equal to zero.
   Same as `float(min: 0.0)`
   """
-  
+
   def nonnegative_float,    do: Float.create(min: 0.0)
 
   @doc """
@@ -257,7 +257,7 @@ defmodule Pollution.VG do
 
   def list(options), do: List.create(options)
 
-  
+
   def list(min, max) when is_integer(min) and is_integer(max) do
     List.create(min: min, max: max)
   end
@@ -330,7 +330,7 @@ defmodule Pollution.VG do
   """
 
   def pick_one(options) do
-    options[:from] |> as_list |> Enum.random
+    options[:from] |> Elixir.List.wrap |> Enum.random
   end
 
 
@@ -347,7 +347,7 @@ defmodule Pollution.VG do
 
   def seq(options) do
     options
-    |> Keyword.put(:of, as_list(options[:of]))
+    |> Keyword.put(:of, Elixir.List.wrap(options[:of]))
     |> Seq.create
   end
 
@@ -478,16 +478,5 @@ defmodule Pollution.VG do
   def value(val) do
     Value.create(value: val)
   end
-
-
-
-
-  ###########
-  # Helpers #
-  ###########
-
-  defp as_list(val) when is_list(val), do: val
-  defp as_list(val), do: [val]
-
 
 end
