@@ -115,7 +115,7 @@ If we constrain the integer to have a minimum value of zero, the _must
 have_ list changes:
 
     iex> int(min: 0) |> Enum.take(5)
-    [ 0, 1, 42, -88484, 663732 ]
+    [ 0, 1, 42, 663732, 967 ]
 
 You can constrain the _must have_ values away altogether:
 
