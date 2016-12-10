@@ -28,6 +28,7 @@ defmodule Pollution.Generator.Float do
   @defaults %State{
     type:      __MODULE__,
     must_have: [ 0.0, -1.0, 1.0, @min, -@min ],
+    must_not_have: MapSet.new,
     min:      -1.0e6,
     max:       1.0e6,
   }
@@ -40,6 +41,7 @@ defmodule Pollution.Generator.Float do
     |> State.add_derived_to_state(options)
     |> State.add_min_max_to_state(options)
     |> State.add_must_have_to_state(options)
+    |> State.add_must_not_have_to_state(options)
     |> update_constraints
   end
 

@@ -13,7 +13,7 @@ defmodule Generator.AtomTest do
   end
 
   test "atom() returns atoms" do
-    run_test([], fn a->
+    run_test([], fn a ->
       assert is_atom(a)
     end)
   end
@@ -24,11 +24,17 @@ defmodule Generator.AtomTest do
       do: assert len in 4..8
     end)
   end
-  
+
   test "setting must_have adds items to the stream" do
     atoms = atom(must_have: [ :donald, :mickey ]) |> G.as_stream([]) |> Enum.take(100)
     assert :donald in atoms
     assert :mickey in atoms
+  end
+
+  test "setting must_not_have removes items from the stream" do
+    run_test([min: 1, max: 2, must_not_have: [1]], fn a ->
+      assert(a != 1)
+    end)
   end
 
 end

@@ -9,6 +9,7 @@ defmodule Pollution.Generator.Atom do
   @defaults %State{
     type:       __MODULE__,
     must_have:  [],
+    must_not_have: MapSet.new,
     min: 0,                     # atom length
     max: 255,
     extra: %{
@@ -102,5 +103,5 @@ defmodule Pollution.Generator.Atom do
   def shrink_backtrack(sp = %SP{}) do
     %SP{ sp | done: true }
   end
-  
+
 end

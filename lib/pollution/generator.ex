@@ -18,6 +18,7 @@ defmodule Pollution.Generator do
     state
     |> State.update_with_derived_values(locals)
     |> state.type.next_value(locals)
+    |> next_if_must_not_have(locals)
   end
 
   def as_stream(state, locals \\ []) do
@@ -33,5 +34,12 @@ defmodule Pollution.Generator do
     other_vals.(state)
   end
 
-end
+  def next_if_must_not_have(original = {value, state = %{must_not_have: must_not_have}}, locals \\ []) do
+    if MapSet.member?(must_not_have, value) do
+      next_value(state, locals)
+    else
+      original
+    end
+  end
 
+end
