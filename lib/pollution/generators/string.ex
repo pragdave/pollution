@@ -12,24 +12,26 @@ defmodule Pollution.Generator.String do
     min: 0,              # string length
     max: 300,
     extra: %{
-      char_range: 0..0xd7af
+      char_range: 0..0xd7af,
+      can_be_blank?: true
     },
   }
-
-
 
   def create(options) do
     @defaults
     |> add_character_range_to_state(options)
     |> State.add_min_max_length_to_state(options)
+    |> add_can_be_blank_to_state(options[:can_be_blank?])
     |> update_constraints
   end
 
+  defp add_can_be_blank_to_state(state, nil), do: state
+  defp add_can_be_blank_to_state(state, blankable?) when is_boolean(blankable?), do: put_in(state.extra.can_be_blank?, blankable?)
 
   defp add_character_range_to_state(state, options) do
     with {remove_must_have, range} = character_range_for(options[:chars]) do
-      maybe_remove_must_have(remove_must_have, state)
-      |> State.add_to_state(:extra, %{ char_range: range })
+      without_must_haves = maybe_remove_must_have(remove_must_have, state)
+      put_in(without_must_haves.extra.char_range, range)
     end
   end
 
@@ -57,17 +59,32 @@ defmodule Pollution.Generator.String do
 
   The next value is chosen randomly from generator_constraints.list
   """
-  def next_value(state, _locals) do
+  def next_value(state, locals) do
     G.after_emptying_must_have(state, fn (state)->
       len = Util.rand_between(state.min, state.max)
       val = generate_chars(state, len)
-      {val, state}
+
+      if state.extra.can_be_blank? do
+        {val, state}
+      else
+        skip_blank_value(state, val, blank?(val), locals)
+      end
     end)
   end
 
   def update_constraints(state) do
-    State.trim_must_have_to_range_based_on(state, &String.length/1)
+    state
+    |> State.trim_must_have_to_range_based_on(&String.length/1)
+    |> maybe_remove_blank_must_haves
   end
+
+  defp maybe_remove_blank_must_haves(state = %{extra: %{can_be_blank?: true}}), do: state
+  defp maybe_remove_blank_must_haves(state = %{must_have: must_have}) do
+   %{state | must_have: Enum.reject(must_have, &blank?/1)}
+  end
+
+  defp skip_blank_value(state, _value, _blank? = true, locals), do: next_value(state, locals)
+  defp skip_blank_value(state, value, _, _), do: {value, state}
 
   defp generate_chars(_, 0), do: ""
   defp generate_chars(state, len) do
@@ -104,7 +121,7 @@ defmodule Pollution.Generator.String do
     end
   end
 
-  
+
   def shrink_one(sp = %SP{low: low, current: current})
   when :erlang.size(current) == low do
     %SP{ sp | done: true }
@@ -113,9 +130,11 @@ defmodule Pollution.Generator.String do
   def shrink_one(sp = %SP{current: << _head :: utf8, rest :: binary >>})  do
     %SP{ sp | current: rest }
   end
-  
+
   def shrink_backtrack(sp = %SP{}) do
     %SP{ sp | done: true }
   end
-  
+
+  defp blank?(v), do: String.trim(v) == ""
+
 end
