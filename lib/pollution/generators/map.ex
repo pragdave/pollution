@@ -11,6 +11,7 @@ defmodule Pollution.Generator.Map do
   @defaults %State{
     type:        __MODULE__,
     must_have:   [],
+    must_not_have: MapSet.new,
     min:         0,    # this is min length
     max:         100,
     child_types: nil
@@ -21,19 +22,20 @@ defmodule Pollution.Generator.Map do
     @defaults
     |> State.add_min_max_length_to_state(options)
     |> State.add_must_have_to_state(options)
+    |> State.add_must_not_have_to_state(options)
     |> add_element_types_to_state(options)
     |> maybe_add_empty_map_to_must_have(options)
   end
 
 
-  
+
   @doc """
   Return a tuple containing the next value for this type, along with a
   potentially updated type state.
-  
+
   If there are elements in the `must_have` list, return the first of them,
   and return a state where that element has been removed from `must_have`.
-  
+
   Otherwise return a random value according to the generator constraints.
   """
   def next_value(state, locals) do
@@ -162,4 +164,3 @@ defmodule Pollution.Generator.Map do
   end
 
 end
-

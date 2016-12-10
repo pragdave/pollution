@@ -9,6 +9,7 @@ defmodule Pollution.Generator.Int do
   @state %State{
     type:       __MODULE__,
     must_have:  [ 0, -1, 1 ],
+    must_not_have: MapSet.new,
     min:      -1_000,
     max:       1_000,
   }
@@ -23,6 +24,7 @@ defmodule Pollution.Generator.Int do
     |> State.add_derived_to_state(options)
     |> State.add_min_max_to_state(options)
     |> State.add_must_have_to_state(options)
+    |> State.add_must_not_have_to_state(options)
     |> update_constraints()
   end
 

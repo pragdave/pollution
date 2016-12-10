@@ -9,6 +9,7 @@ defmodule Pollution.Generator.String do
   @defaults %State{
     type:       __MODULE__,
     must_have:  [ "", " " ],
+    must_not_have: MapSet.new,
     min: 0,              # string length
     max: 300,
     extra: %{
@@ -22,6 +23,7 @@ defmodule Pollution.Generator.String do
     @defaults
     |> add_character_range_to_state(options)
     |> State.add_min_max_length_to_state(options)
+    |> State.add_must_not_have_to_state(options)
     |> update_constraints
   end
 
@@ -104,7 +106,7 @@ defmodule Pollution.Generator.String do
     end
   end
 
-  
+
   def shrink_one(sp = %SP{low: low, current: current})
   when :erlang.size(current) == low do
     %SP{ sp | done: true }
@@ -113,9 +115,9 @@ defmodule Pollution.Generator.String do
   def shrink_one(sp = %SP{current: << _head :: utf8, rest :: binary >>})  do
     %SP{ sp | current: rest }
   end
-  
+
   def shrink_backtrack(sp = %SP{}) do
     %SP{ sp | done: true }
   end
-  
+
 end

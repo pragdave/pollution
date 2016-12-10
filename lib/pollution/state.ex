@@ -3,16 +3,17 @@ defmodule Pollution.State do
   @moduledoc false
 
   defstruct(
-    type:         __MODULE__,
-    last_value:   nil,
-    must_have:    [ ],
-    child_types:  [ ],
-    last_child:   nil,
-    derived:      [ ],
-    min:          nil,
-    max:          nil,
-    distribution: nil,
-    extra:        nil,
+    type:          __MODULE__,
+    last_value:    nil,
+    must_have:     [ ],
+    must_not_have: MapSet.new,
+    child_types:   [ ],
+    last_child:    nil,
+    derived:       [ ],
+    min:           nil,
+    max:           nil,
+    distribution:  nil,
+    extra:         nil,
   )
 
   ##############################
@@ -27,7 +28,7 @@ defmodule Pollution.State do
     state
     |> add_to_state(:derived, options[:derived])
   end
-  
+
   def add_min_max_to_state(state, options) do
     state
     |> add_to_state(:min, options[:min])
@@ -39,16 +40,25 @@ defmodule Pollution.State do
     |> add_to_state(:min, options[:min])
     |> add_to_state(:max, options[:max])
   end
-  
+
   def add_must_have_to_state(state, options) do
     add_to_state(state, :must_have, options[:must_have])
   end
-  
+
   def add_element_type_to_state(state, options) do
     add_to_state(state, :child_types, maybe_wrap_in_list(options[:of]))
   end
-  
-  
+
+  def add_must_not_have_to_state(state, options) do
+    must_not_have =
+      options
+      |> Access.get(:must_not_have)
+      |> into_mapset
+
+    add_to_state(state, :must_not_have, must_not_have)
+  end
+
+
   def add_to_state(state, _keys, nil),  do: state
   def add_to_state(state, key, value) when is_atom(key) do
     Map.put(state, key, value)
@@ -82,10 +92,13 @@ defmodule Pollution.State do
     end)
     Map.put(state, :must_have, updated_must_have)
   end
-  
+
   def maybe_wrap_in_list(nil), do: nil
   def maybe_wrap_in_list(l) when is_list(l), do: l
   def maybe_wrap_in_list(v), do: [v]
+
+  def into_mapset(nil), do: MapSet.new()
+  def into_mapset(v), do: v |> maybe_wrap_in_list |> MapSet.new
 
 end
 

@@ -9,6 +9,7 @@ defmodule Pollution.Generator.Tuple do
   @defaults %State{
     type:       __MODULE__,
     must_have:  [],
+    must_not_have: MapSet.new,
     child_types: [ VG.seq(of: [VG.value(42)]) ],
     min: 0,                     # tuple length
     max: 6,
@@ -101,7 +102,7 @@ defmodule Pollution.Generator.Tuple do
     with len = length(list),
     do: { VG.list(of: VG.seq(of: list), min: len, max: len), length(list) }
   end
-  
+
   defp update_delegate(state, delegate) do
     %State{state | extra: %{ delegate: delegate }}
   end
@@ -109,5 +110,5 @@ defmodule Pollution.Generator.Tuple do
   defp update_delegate(state, delegate, length) do
     %State{state | extra: %{ delegate: delegate }, min: length, max: length}
   end
-  
+
 end
