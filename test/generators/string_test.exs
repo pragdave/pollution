@@ -46,7 +46,7 @@ defmodule Generator.StringTest do
       |> Enum.each(fn (ch) -> assert ch in ?a..?z end)
     end)
   end
-  
+
   test "string() returns uppercase if requested" do
     run_test([chars: :upper], fn str ->
       assert is_binary(str)
@@ -55,7 +55,7 @@ defmodule Generator.StringTest do
       |> Enum.each(fn (ch) -> assert ch in ?A..?Z end)
     end)
   end
-  
+
   test "string() returns a range if requested" do
     run_test([chars: ?e..?m], fn str ->
       assert is_binary(str)
@@ -71,7 +71,7 @@ defmodule Generator.StringTest do
       assert "" in strings
       assert " " in strings
     end
-  
+
     test "for string(min: 1) returns a space" do
       strings = string(min: 1) |> G.as_stream([]) |> Enum.take(1)
       assert " " in strings
@@ -81,6 +81,15 @@ defmodule Generator.StringTest do
       strings = string(max: 0) |> G.as_stream([]) |> Enum.take(3)
       assert strings == [ "", "", "" ]
     end
-    
+
   end
+
+  describe "can_be_blank?" do
+    test "will not yield a blank string" do
+      strings = string(can_be_blank?: false) |> G.as_stream([]) |> Enum.take(100)
+      refute Enum.any?(strings, &blank?/1)
+    end
+  end
+
+  defp blank?(v), do: String.trim(v) == ""
 end
