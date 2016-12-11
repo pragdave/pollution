@@ -20,6 +20,7 @@ defmodule Pollution.Generator.String do
 
   def create(options) do
     @defaults
+    |> State.add_must_have_to_state(options)
     |> add_character_range_to_state(options)
     |> State.add_min_max_length_to_state(options)
     |> update_constraints

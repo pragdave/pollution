@@ -81,6 +81,12 @@ defmodule Generator.StringTest do
       strings = string(max: 0) |> G.as_stream([]) |> Enum.take(3)
       assert strings == [ "", "", "" ]
     end
+
+    test "must_have adds values to the results" do
+      strings = string(must_have: [ "a", "b"], max: 3) |> G.as_stream([]) |> Enum.take(3)
+      assert hd(strings)     == "a"
+      assert hd(tl(strings)) == "b"
+    end
     
   end
 end

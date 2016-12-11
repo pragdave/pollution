@@ -13,7 +13,7 @@ defmodule Pollution.VG do
   If you need finer control over the types and values returned, see
   the `choose/2` function.
   """
-  def any, do: choose(from: [ atom, float, int, list, map, string, tuple ])
+  def any, do: choose(from: [ atom(), float(), int(), list(), map(), string(), tuple() ])
 
 
   @doc """
