@@ -3,7 +3,7 @@ defmodule Pollution.Generator.Choose do
   @moduledoc false
 
   @behaviour Pollution.Generator
-  
+
   alias Pollution.State
   alias Pollution.Util
   alias Pollution.Generator, as: G
@@ -16,6 +16,8 @@ defmodule Pollution.Generator.Choose do
     @state
     |> State.set_param(:child_types, Util.list_to_map(options[:from]))
   end
+
+  def filters, do: %{}
 
   def next_value(state = %State{child_types: list}, locals) do
 
