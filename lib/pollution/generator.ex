@@ -33,30 +33,6 @@ defmodule Pollution.Generator do
     |> reject_filters(filters)
   end
 
-  def except(state, predicates_or_names) when is_list(predicates_or_names) do
-    Enum.reduce(predicates_or_names, state, fn predicate_or_name, state_acc ->
-      except(state_acc, predicate_or_name)
-    end)
-  end
-
-  def except(state = %{filters: filters}, predicate) when is_function(predicate, 1) do
-    with_predicate = Map.update(filters, :predicates, [predicate], &([predicate | &1]))
-
-    %{state | filters: with_predicate}
-  end
-
-  def except(state = %{filters: filters}, {name, predicate}) when is_atom(name) and is_function(predicate, 1) do
-    %{state | filters: Map.put(filters, name, predicate)}
-  end
-
-  def except(state = %{filters: filters}, name) when is_atom(name) do
-    if Map.has_key?(state.type.filters, name) do
-      %{state | filters: Map.put(filters, name, state.type.filters[name])}
-    else
-      raise ArgumentError, "#{state.type} does not provide a filter named #{name}."
-    end
-  end
-
   def after_emptying_must_have(state = %State{must_have: [ h | t ]}, _other_vals) do
     { h, %State{state | must_have: t} }
   end

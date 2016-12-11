@@ -3,7 +3,7 @@ defmodule Generator.StringTest do
   use ExUnit.Case
 
   alias  Pollution.Generator, as: G
-  import Pollution.VG, only: [ string: 0, string: 1 ]
+  import Pollution.VG, only: [ string: 0, string: 1 , except: 2]
 
   def run_test(options, test_code) do
     string(options)
@@ -86,21 +86,21 @@ defmodule Generator.StringTest do
 
   describe "filters" do
     test "blank filters out empty strings" do
-      strings = string() |> G.except(:blank) |> G.as_stream([]) |> Enum.take(3)
+      strings = string() |> except(:blank) |> G.as_stream([]) |> Enum.take(3)
 
       refute "" in strings
       refute " " in strings
     end
 
     test "allows adding anonymous filters" do
-      strings = string() |> G.except(&(&1 == " ")) |> G.as_stream([]) |> Enum.take(3)
+      strings = string() |> except(&(&1 == " ")) |> G.as_stream([]) |> Enum.take(3)
 
       refute " " in strings
       assert "" in strings
     end
 
     test "allows naming the filter for introspection purposes" do
-      state = string() |> G.except({:one_space, &(&1 == " ")})
+      state = string() |> except({:one_space, &(&1 == " ")})
       strings = state |> G.as_stream([]) |> Enum.take(3)
 
       refute " " in strings
