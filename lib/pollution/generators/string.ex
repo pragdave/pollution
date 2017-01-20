@@ -25,6 +25,13 @@ defmodule Pollution.Generator.String do
     |> update_constraints
   end
 
+  def filters do
+    %{
+      blank: &blank?/1
+    }
+  end
+
+  defp blank?(string), do: String.trim(string) == ""
 
   defp add_character_range_to_state(state, options) do
     with {remove_must_have, range} = character_range_for(options[:chars]) do
@@ -104,7 +111,7 @@ defmodule Pollution.Generator.String do
     end
   end
 
-  
+
   def shrink_one(sp = %SP{low: low, current: current})
   when :erlang.size(current) == low do
     %SP{ sp | done: true }
@@ -113,9 +120,9 @@ defmodule Pollution.Generator.String do
   def shrink_one(sp = %SP{current: << _head :: utf8, rest :: binary >>})  do
     %SP{ sp | current: rest }
   end
-  
+
   def shrink_backtrack(sp = %SP{}) do
     %SP{ sp | done: true }
   end
-  
+
 end

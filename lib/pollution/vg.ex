@@ -479,4 +479,73 @@ defmodule Pollution.VG do
     Value.create(value: val)
   end
 
+  @doc """
+  Causes the stream never to output certain values.  There are a few ways to use this:
+
+  ## Filters provided by the generator
+
+    iex> import Pollution.{Generator, VG}
+    iex> string() |> as_stream() |> Enum.take(1)
+    [""]
+    iex> string() |> except(:blank) |> as_stream() |> Enum.take(1)
+    ["..."]
+
+
+  ## A provided function matcher
+
+    iex> import Pollution.{Generator, VG}
+    iex> int() |> except(&(abs(&1) <= 1)) |> as_stream() |> Enum.take(3)
+    [758, -995, -374]
+
+  ## A provided exact match
+
+  This exact match filter will not work with atoms due
+  to the fact that atom names are used for named filters,
+  so you must provide a function like &(&1 == :atom).
+
+  iex> import Pollution.{Generator, VG}
+  iex> int() |> as_stream() |> Enum.take(3)
+  [0, -1, 1]
+  iex> int() |> except(-1) |> as_stream() |> Enum.take(3)
+  [0, 1, 470]
+
+  ## A named predicate
+
+  This has no effect on the behavior, but it sets an internal name for the filter.
+  This is useful if you intend to deal directly with the `Pollution.State` object,
+  and would like to be able to see what filters have been applied.
+
+  iex> import Pollution.{Generator, VG}
+  iex> int() |> except(:more_than_one_away_from_zero, &(abs(&1) <= 1)) |> as_stream() |> Enum.take(3)
+  [758, -995, -374]
+
+  """
+
+  def except(state, predicates_or_names) when is_list(predicates_or_names) do
+    Enum.reduce(predicates_or_names, state, fn predicate_or_name, state_acc ->
+      except(state_acc, predicate_or_name)
+    end)
+  end
+
+  def except(state = %{filters: filters}, predicate) when is_function(predicate, 1) do
+    with_predicate = Elixir.Map.update(filters, :predicates, [predicate], &([predicate | &1]))
+
+    %{state | filters: with_predicate}
+  end
+
+  def except(state = %{filters: filters}, {name, predicate}) when is_atom(name) and is_function(predicate, 1) do
+    %{state | filters: Elixir.Map.put(filters, name, predicate)}
+  end
+
+  def except(state = %{filters: filters}, name) when is_atom(name) do
+    if Elixir.Map.has_key?(state.type.filters, name) do
+      %{state | filters: Elixir.Map.put(filters, name, state.type.filters[name])}
+    else
+      raise ArgumentError, "#{state.type} does not provide a filter named #{name}."
+    end
+  end
+
+  def except(state, exact_match_value) do
+    except(state, &(&1 == exact_match_value))
+  end
 end

@@ -25,15 +25,15 @@ defmodule Pollution.Generator.Map do
     |> maybe_add_empty_map_to_must_have(options)
   end
 
+  def filters, do: %{}
 
-  
   @doc """
   Return a tuple containing the next value for this type, along with a
   potentially updated type state.
-  
+
   If there are elements in the `must_have` list, return the first of them,
   and return a state where that element has been removed from `must_have`.
-  
+
   Otherwise return a random value according to the generator constraints.
   """
   def next_value(state, locals) do
@@ -162,4 +162,3 @@ defmodule Pollution.Generator.Map do
   end
 
 end
-

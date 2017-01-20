@@ -23,7 +23,7 @@ defmodule Pollution.Generator.Atom do
     |> create_delegate(options)
   end
 
-
+  def filters, do: %{}
 
   @doc """
   Return a tuple containing the next value for this type, along with a
@@ -102,5 +102,5 @@ defmodule Pollution.Generator.Atom do
   def shrink_backtrack(sp = %SP{}) do
     %SP{ sp | done: true }
   end
-  
+
 end
