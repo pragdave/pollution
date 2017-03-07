@@ -24,7 +24,7 @@ defmodule Pollution.Generator.Tuple do
 #    |> trim_must_have_to_range
   end
 
-
+  def filters, do: %{}
 
   @doc """
   Return a tuple containing the next value for this type, along with a
@@ -101,7 +101,7 @@ defmodule Pollution.Generator.Tuple do
     with len = length(list),
     do: { VG.list(of: VG.seq(of: list), min: len, max: len), length(list) }
   end
-  
+
   defp update_delegate(state, delegate) do
     %State{state | extra: %{ delegate: delegate }}
   end
@@ -109,5 +109,5 @@ defmodule Pollution.Generator.Tuple do
   defp update_delegate(state, delegate, length) do
     %State{state | extra: %{ delegate: delegate }, min: length, max: length}
   end
-  
+
 end

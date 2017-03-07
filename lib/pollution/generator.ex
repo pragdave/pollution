@@ -12,6 +12,7 @@ defmodule Pollution.Generator do
 
   @callback update_constraints(state) :: state
 
+  @callback filters :: %{optional(atom) => (any -> boolean)}
 
 
   def next_value(state, locals \\ []) do
@@ -21,9 +22,16 @@ defmodule Pollution.Generator do
   end
 
   def as_stream(state, locals \\ []) do
-    Stream.unfold(state, fn state -> next_value(state, locals) end)
-  end
+    filters =
+      state
+      |> Map.get(:filters)
+      |> Map.values
+      |> List.flatten
 
+    state
+    |> Stream.unfold(fn state -> next_value(state, locals) end)
+    |> reject_filters(filters)
+  end
 
   def after_emptying_must_have(state = %State{must_have: [ h | t ]}, _other_vals) do
     { h, %State{state | must_have: t} }
@@ -33,5 +41,9 @@ defmodule Pollution.Generator do
     other_vals.(state)
   end
 
-end
+  defp reject_filters(stream, []), do: stream
+  defp reject_filters(base_stream, filters) do
+    Enum.reduce(filters, base_stream, &Stream.reject(&2, &1))
+  end
 
+end

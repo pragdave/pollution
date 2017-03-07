@@ -25,7 +25,7 @@ defmodule Generator.TupleTest do
   end
 
   test "tuple of given types" do
-    run_test([like: { int, string(chars: :lower), value(42) }], fn tup ->
+    run_test([like: { int(), string(chars: :lower), value(42) }], fn tup ->
       assert tuple_size(tup) == 3
       assert is_integer(elem(tup, 0))
       assert is_binary(elem(tup, 1))

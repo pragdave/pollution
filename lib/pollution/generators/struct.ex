@@ -3,7 +3,7 @@ defmodule Pollution.Generator.Struct do
   @moduledoc false
 
   @behaviour Pollution.Generator
-  
+
   alias Pollution.State
   alias Pollution.VG
   alias Pollution.Generator, as: G
@@ -25,6 +25,8 @@ defmodule Pollution.Generator.Struct do
     s = put_in(s.extra[:struct_name], name)
     s
   end
+
+  def filters, do: %{}
 
   # Convert the values into value generators for their types
   defp meta(s) do
@@ -59,11 +61,11 @@ defmodule Pollution.Generator.Struct do
   def update_constraints(state) do
     State.trim_must_have_to_range_based_on(state, &length/1)
   end
-  
+
   ###################
   # Shrinking stuff #
   ###################
-  
+
   def params_for_shrink(state, current) do
     M.params_for_shrink(state, current)
   end

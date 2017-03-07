@@ -26,6 +26,7 @@ defmodule Pollution.Generator.Int do
     |> update_constraints()
   end
 
+  def filters, do: %{}
 
   @doc """
   Return a tuple containing the next value for this type, along with a

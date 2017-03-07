@@ -3,7 +3,7 @@ defmodule Pollution.Generator.Value do
   @moduledoc false
 
   @behaviour Pollution.Generator
-  
+
   alias Pollution.State
   alias Pollution.Shrinker.Params, as: SP
 
@@ -14,6 +14,8 @@ defmodule Pollution.Generator.Value do
   def create([value: value]) do
     %State{ @state | last_value: value }
   end
+
+  def filters, do: %{}
 
   def next_value(state, _locals) do
     { state.last_value, state }

@@ -9,7 +9,7 @@ defmodule Generator_Constraints.FloatTest do
 
   describe "creation" do
     test "with no arguments" do
-      with f = float do
+      with f = float() do
 
         assert  0.0 in f.must_have
         assert -1.0 in f.must_have
@@ -55,7 +55,7 @@ defmodule Generator_Constraints.FloatTest do
   describe "shortcuts" do
   
     test "positive_float" do
-      positive_float
+      positive_float()
       |> G.as_stream
       |> Enum.take(100)
       |> Enum.each(fn v ->
@@ -65,7 +65,7 @@ defmodule Generator_Constraints.FloatTest do
     end
     
     test "negative_float" do
-      negative_float
+      negative_float()
       |> G.as_stream
       |> Enum.take(100)
       |> Enum.each(fn v ->
@@ -75,7 +75,7 @@ defmodule Generator_Constraints.FloatTest do
     end
     
     test "nonnegative_float" do
-      positive_float
+      positive_float()
       |> G.as_stream
       |> Enum.take(100)
       |> Enum.each(fn v ->

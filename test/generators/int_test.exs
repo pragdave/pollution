@@ -7,7 +7,7 @@ defmodule IntTest do
 
   describe "creation" do
     test "with no arguments" do
-      with i = int do
+      with i = int() do
         assert i.type == G.Int
         assert  0 in i.must_have
         assert -1 in i.must_have
@@ -55,21 +55,21 @@ defmodule IntTest do
     end
 
     test "positive_int" do
-      positive_int
+      positive_int()
       |> G.as_stream()
       |> Enum.take(50)
       |> Enum.all?(&(&1 > 0))
     end
     
     test "negative_int" do
-      negative_int
+      negative_int()
       |> G.as_stream()
       |> Enum.take(50)
       |> Enum.all?(&(&1 < 0))
     end
     
     test "nonnegative_int" do
-      nonnegative_int
+      nonnegative_int()
       |> G.as_stream()
       |> Enum.take(50)
       |> Enum.all?(&(&1 >= 0))

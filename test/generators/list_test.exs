@@ -40,7 +40,7 @@ defmodule Generator.ListTest do
     end
     
     test "with a type argument" do
-      with l = list(int) do
+      with l = list(int()) do
         assert [] in l.must_have
       end
     end
@@ -70,7 +70,7 @@ defmodule Generator.ListTest do
     end
     
     test "has elements of the correct type (int)" do
-      list(int)
+      list(int())
       |> G.as_stream([])
       |> Enum.take(5)
       |> Enum.each(fn a_list ->
