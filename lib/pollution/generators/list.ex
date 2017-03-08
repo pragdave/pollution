@@ -77,13 +77,18 @@ defmodule Pollution.Generator.List do
   end
 
   defp populate_list(s = %State{}, locals) do
-    len = choose_length(s.min, s.max)
     generator = hd(s.child_types)
-
-    { list, generator } = Enum.reduce(1..len, {[], generator}, fn (_, {result, gen}) ->
-      { value, gen } = G.next_value(gen, locals)
-      { [ value | result ], gen }
-    end)
+    { list, generator } =
+      case choose_length(s.min, s.max) do
+        len when len != 0 ->
+          1..len
+          |> Enum.filter(& &1 <= len && &1 > 0)
+          |> Enum.reduce({[], generator}, fn (_, {result, gen}) ->
+            { value, gen } = G.next_value(gen, locals)
+            { [ value | result ], gen }
+          end)
+        0 -> { [], generator }
+      end
 
     { Enum.reverse(list), %State{s | child_types: [ generator ] } }
   end
