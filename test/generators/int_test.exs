@@ -35,7 +35,7 @@ defmodule IntTest do
         assert i.must_have == [ 1 ]
       end
     end
-    
+
     test "with keyword arguments including type-level constraints" do
       with i = int(min: 3, max: 20, must_have: [4,5,6]) do
         assert i.max == 20
@@ -43,7 +43,7 @@ defmodule IntTest do
         assert i.must_have == [4, 5, 6]
       end
     end
-    
+
   end
 
   describe "generation using" do
@@ -60,14 +60,14 @@ defmodule IntTest do
       |> Enum.take(50)
       |> Enum.all?(&(&1 > 0))
     end
-    
+
     test "negative_int" do
       negative_int()
       |> G.as_stream()
       |> Enum.take(50)
       |> Enum.all?(&(&1 < 0))
     end
-    
+
     test "nonnegative_int" do
       nonnegative_int()
       |> G.as_stream()

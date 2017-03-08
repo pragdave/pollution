@@ -4,7 +4,7 @@ defmodule Generator.ListTest do
 
   alias Pollution.Generator, as: G
   import Pollution.VG
-  
+
   describe "creation" do
     test "with no arguments" do
       with l = list() do
@@ -14,7 +14,7 @@ defmodule Generator.ListTest do
         assert l.min <= l.max
       end
     end
-  
+
     test "with 1 argument" do
       with l = list(3) do
         assert l.min == 3
@@ -22,7 +22,7 @@ defmodule Generator.ListTest do
         assert !([] in l.must_have)
       end
     end
-  
+
     test "with 2 arguments" do
       with l = list(3,5) do
         assert (![] in l.must_have)
@@ -30,7 +30,7 @@ defmodule Generator.ListTest do
         assert l.max == 5
       end
     end
-    
+
     test "with 2 arguments and a minimum of 0" do
       with l = list(0,5) do
         assert [] in l.must_have
@@ -38,7 +38,7 @@ defmodule Generator.ListTest do
         assert l.max == 5
       end
     end
-    
+
     test "with a type argument" do
       with l = list(int()) do
         assert [] in l.must_have
@@ -56,7 +56,7 @@ defmodule Generator.ListTest do
           assert length(a_list) == 4
         end)
     end
-    
+
     test "has a length between min and max" do
       min = 2
       max = 10
@@ -68,7 +68,7 @@ defmodule Generator.ListTest do
         assert length(a_list) <= max
       end)
     end
-    
+
     test "has elements of the correct type (int)" do
       list(int())
       |> G.as_stream([])
@@ -77,7 +77,7 @@ defmodule Generator.ListTest do
         Enum.each(a_list, fn (i) -> assert is_integer(i) end)
       end)
     end
-  
+
     test "has elements of the correct type (value)" do
       list(value("cat"))
       |> G.as_stream([])
@@ -86,7 +86,7 @@ defmodule Generator.ListTest do
         Enum.each(a_list, fn (i) -> assert i == "cat" end)
       end)
     end
-  
+
     test "has elements of the correct type with constraints" do
       list(int(min: 2, max: 4))
       |> G.as_stream([])

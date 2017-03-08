@@ -24,13 +24,13 @@ defmodule Generator.StructTest do
       assert %MyStruct{} = str
     end)
   end
-  
+
   test "struct() accepts the instance of a struct" do
     run_test(%MyStruct{}, 1, fn str ->
       assert %MyStruct{} = str
     end)
   end
-  
+
   test "the generator types are based on the defaults" do
     run_test(%MyStruct{}, fn str ->
       assert %MyStruct{an_atom: a, an_int: i} = str
@@ -47,5 +47,5 @@ defmodule Generator.StructTest do
       assert is_float(f)
     end)
   end
-  
+
 end
