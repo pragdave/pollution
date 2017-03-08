@@ -24,7 +24,7 @@ defmodule Generator.AtomTest do
       do: assert len in 4..8
     end)
   end
-  
+
   test "setting must_have adds items to the stream" do
     atoms = atom(must_have: [ :donald, :mickey ]) |> G.as_stream([]) |> Enum.take(100)
     assert :donald in atoms

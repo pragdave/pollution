@@ -14,7 +14,7 @@ defmodule PickOneTest do
     result = pick_one(from: [ value(42) ]) |> G.as_stream |> Enum.take(5)
     assert result == [ 42, 42, 42, 42, 42 ]
   end
-  
+
   test "a choice of three items returns one of them" do
     counts = Enum.reduce(1..100, %{ }, fn _, counts ->
       result = pick_one(from: [ value(1), value(2), value(3) ]) |> G.as_stream |> Enum.take(1)

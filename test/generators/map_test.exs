@@ -17,7 +17,7 @@ defmodule Generator.MapTest do
       assert is_map(map)
     end)
   end
-  
+
   # test "map returns a range of sizes" do
   #   run_test([min: 3, max: 6], fn map ->
   #     assert map_size(map) in 3..6
@@ -26,23 +26,23 @@ defmodule Generator.MapTest do
 
   # test "map honors like:" do
   #   run_test([like: %{ int => string(chars: :lower), atom => value(42) }], fn map ->
-  # 
+  #
   #     contents = map |> Map.to_list |> Enum.sort
-  # 
+  #
   #     assert [ { k1, v1 }, { k2, v2 } ]  = contents
-  # 
+  #
   #     assert is_integer(k1)
   #     assert is_binary(v1)
   #     assert (v1 |> String.to_char_list |> Enum.all?(fn ch -> ch in ?a..?z end))
-  # 
+  #
   #   assert is_atom(k2)
   #   assert v2 == 42
   #   end)
   # end
-  # 
+  #
   # test "map honors of:" do
   #   run_test([like: %{ int => string(chars: :lower), atom => value(42) }], fn map ->
-  # 
+  #
   #     map
   #     |> Map.to_list
   #     |> Enum.each(
