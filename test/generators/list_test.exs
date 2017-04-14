@@ -99,4 +99,47 @@ defmodule Generator.ListTest do
       end)
     end
   end
+
+  describe "derived values" do
+    test "are looked up initially" do
+      list(derived: [ min: fn locals -> locals[:a] end], max: 12)
+      |> G.as_stream([a: 10])
+      |> Enum.take(100)
+      |> Enum.each(fn v -> assert length(v) >= 10 && length(v) <= 12 end)
+    end
+
+    test "translate child types appropriately" do
+      list(derived: [ of: fn locals ->
+        float(min: locals[:a], max: locals[:b])
+      end], max: 10)
+      |> G.as_stream([a: 0, b: 5])
+      |> Enum.take(100)
+      |> Enum.each(fn vs ->
+        assert Enum.all?(vs, fn v -> v >= 0.0 and v <= 5.0 end)
+      end)
+    end
+
+    test "prune must have list" do
+      list(derived: [ of: fn locals -> locals[:a] end], max: 12, must_have: [ [8, 9, 10, 100] ])
+      |> G.as_stream([a: int(max: 20)])
+      |> Enum.take(100)
+      |> Enum.each(fn v ->
+        assert Enum.all?(v, &is_integer/1) and
+        Enum.all?(v, &(&1 <= 20)) and
+        length(v) <= 12 end)
+    end
+
+    test "recalculate each time" do
+      f = list(derived: [ min: fn locals -> locals[:a] end], max: 12)
+      { v, f1 } = G.next_value(f, [ a: 10 ])
+
+      assert length(v) >= 10 && length(v) <= 12
+      assert f1.min == 10.0
+
+      { v, f2 } = G.next_value(f1, [ a: 12 ])
+
+      assert length(v) == 12
+      assert f2.min == 12.0
+    end
+  end
 end

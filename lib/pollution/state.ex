@@ -58,8 +58,11 @@ defmodule Pollution.State do
 
   def update_with_derived_values(state=%{derived: derived}, locals)
   when is_list(derived) and length(derived) > 0 do
-    Enum.reduce(derived, state, fn {k,v}, state ->
-      Map.put(state, k, v.(locals))
+    Enum.reduce(derived, state, fn
+      {:of, v}, state ->
+        Map.put(state, :child_types, maybe_wrap_in_list(v.(locals)))
+      {k, v}, state ->
+        Map.put(state, k, v.(locals))
     end)
     |> state.type.update_constraints
   end
@@ -73,15 +76,33 @@ defmodule Pollution.State do
   end
 
   def trim_must_have_to_range_based_on(state, func) do
-    min = state.min
-    max = state.max
-    updated_must_have =
-      state.must_have
-    |> Enum.filter(fn val ->
-      with limit = func.(val),
-      do:  limit >= min && limit <= max
+    trimmer = must_have_trimming_function(state)
+    updated_must_have = map_then_filter(state.must_have, trimmer, func)
+    %{ state | must_have: updated_must_have }
+  end
+
+  defp map_then_filter(enum, filter, mapper) do
+    Enum.filter(enum, fn (element) ->
+      element |> mapper.() |> filter.()
     end)
-    Map.put(state, :must_have, updated_must_have)
+  end
+
+  defp must_have_trimming_function(%__MODULE__{ min: min, max: max} = state) do
+    fn limit -> limit >= min && limit <= max end
+  end
+
+  def trim_must_have_to_child_types(state) do
+    case state.child_types do
+      [child_type] ->
+        new_must_have = Enum.map(state.must_have, fn
+          (must_have) ->
+            shadowed_must_have_state = %{ child_type | must_have: must_have }
+            new_state = trim_must_have_to_range(shadowed_must_have_state)
+            new_state.must_have
+        end)
+        %{ state | must_have: new_must_have }
+      _ -> state
+    end
   end
 
   def maybe_wrap_in_list(nil), do: nil
