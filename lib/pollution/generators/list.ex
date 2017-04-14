@@ -21,6 +21,7 @@ defmodule Pollution.Generator.List do
     |> State.add_min_max_length_to_state(options)
     |> State.add_must_have_to_state(options)
     |> State.add_element_type_to_state(options)
+    |> State.add_derived_to_state(options)
     |> maybe_add_empty_list_to_must_have(options)
   end
 
@@ -74,6 +75,7 @@ defmodule Pollution.Generator.List do
 
   def update_constraints(state) do
     State.trim_must_have_to_range_based_on(state, &length/1)
+    |> State.trim_must_have_to_child_types()
   end
 
   defp populate_list(s = %State{}, locals) do
