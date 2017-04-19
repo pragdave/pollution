@@ -62,9 +62,10 @@ alias it and prefix the function names with `VG`:
 defmodule MyModule do
 
   alias Pollution.VG
+  import Pollution.Generator, only: [as_stream: 1]
 
   def my_function do
-    IO.inspect VG.list(VG.int) |> Enum.take(5)
+    IO.inspect VG.list(VG.int) |> as_stream() |> Enum.take(5)
   end
 end
 ```
@@ -76,9 +77,10 @@ or import it and pollute your module with dozens of fun value generators :smile:
 defmodule MyModule do
 
   import Pollution.VG
+  alias Pollution.VG
 
   def my_function do
-    IO.inspect list(tuple(atom, list(int))) |> Enum.take(5)
+    IO.inspect list(tuple(atom, list(int))) |> as_stream() |> Enum.take(5)
   end
 end
 ```
@@ -108,18 +110,18 @@ other constraints you may have applied, and alter the must have list
 accordingly. For example, the default _must have_ list for integers is
 `[-1, 0, 1]`:
 
-    iex> int |> Enum.take(5)
+    iex> int |> as_stream() |> Enum.take(5)
     [ -1, 0, 1, 42, -88484 ]
 
 If we constrain the integer to have a minimum value of zero, the _must
 have_ list changes:
 
-    iex> int(min: 0) |> Enum.take(5)
+    iex> int(min: 0) |> as_stream() |> Enum.take(5)
     [ 0, 1, 42, 663732, 967 ]
 
 You can constrain the _must have_ values away altogether:
 
-    iex> int(min: 5, max: 7) |> Enum.take(5)
+    iex> int(min: 5, max: 7) |> as_stream() |> Enum.take(5)
     [ 6, 7, 5, 5, 6 ]
 
 This also applies to _must have_ values you set yourself.
