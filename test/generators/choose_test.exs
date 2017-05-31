@@ -24,5 +24,17 @@ defmodule ChooseTest do
     end
   end
 
-end
+  test "choosing from values returns on of those values" do
+    result = choose(values: [ 1, 2, 3 ]) |> G.as_stream |> Enum.take(100)
 
+    counts = Enum.reduce(result, %{}, fn v, counts ->
+      Map.update(counts, v, 0, &(&1+1))
+    end)
+
+    with likely_range = 10..50 do
+      assert counts[1] in likely_range
+      assert counts[2] in likely_range
+      assert counts[3] in likely_range
+    end
+  end
+end

@@ -12,6 +12,9 @@ defmodule Pollution.Generator.Choose do
     type: __MODULE__
   }
 
+  def create([values: values]) do
+    create(from: Enum.map(values, &G.Value.create(value: &1)))
+  end
   def create(options) when is_list(options) do
     @state
     |> State.set_param(:child_types, Util.list_to_map(options[:from]))
