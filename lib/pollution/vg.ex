@@ -62,6 +62,8 @@ defmodule Pollution.VG do
         iex> import Pollution.{Generator, VG}
         iex> choose(from: [ int(min: 3, max: 7), bool ]) |> as_stream |> Enum.take(5)
         [6, false, 4, true, true]
+        iex> choose(values: [5, 6, 7]) |> as_stream |> Enum.take(5)
+        [6, 5, 5, 7, 6]
   """
   def choose(options), do: Choose.create(options)
 
