@@ -23,6 +23,7 @@ defmodule Pollution.Generator.Int do
     |> State.add_derived_to_state(options)
     |> State.add_min_max_to_state(options)
     |> State.add_must_have_to_state(options)
+    |> State.add_filters_to_state(options)
     |> update_constraints()
   end
 
