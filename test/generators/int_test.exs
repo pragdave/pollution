@@ -124,5 +124,27 @@ defmodule IntTest do
     end
   end
 
+  describe "int value filters" do
+    test "filters out values with the specified predicate" do
+      int(filters: %{negative_numbers: fn n -> (n < 0) end})
+      |> G.as_stream()
+      |> Enum.take(100)
+      |> Enum.each(fn v -> assert v >= 0 end)
+    end
+    
+    test "filters out values by chaining the specified predicates" do
+      int(filters: %{ 
+        negative_numbers: fn n -> (n < 0) end,
+        odd_numbers: fn n -> rem(n, 2) == 0 end
+      }) |> G.as_stream()
+      |> Enum.take(100)
+      |> Enum.each(fn v -> assert((v >= 0) and (rem(v, 2) != 0))  end)
+    end
+    
+    test "causes error when non-predicate is provided" do
+      assert catch_error(int(min: 1, filters: %{bogus: 2149}) |> G.as_stream() |> Enum.take(1)) == {:badfun, 2149}
+    end
+  end
+
 end
 

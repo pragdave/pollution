@@ -44,7 +44,11 @@ defmodule Pollution.State do
   def add_must_have_to_state(state, options) do
     add_to_state(state, :must_have, options[:must_have])
   end
-
+  
+  def add_filters_to_state(state, options) do
+    add_to_state(state, :filters, options[:filters])
+  end
+  
   def add_element_type_to_state(state, options) do
     add_to_state(state, :child_types, maybe_wrap_in_list(options[:of]))
   end
