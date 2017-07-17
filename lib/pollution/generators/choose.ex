@@ -40,8 +40,8 @@ defmodule Pollution.Generator.Choose do
   ###################
 
   # delegate shrinking to the last type we chose
-  def params_for_shrink(state = %State{ last_child: last_child }, current) do
-    last_child.type.params_for_shrink(state, current)
+  def params_for_shrink(%State{ last_child: last_child }, current) do
+    last_child.type.params_for_shrink(last_child, current)
   end
 
 end

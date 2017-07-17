@@ -17,10 +17,9 @@ defmodule Pollution.Shrinker do
   def shrink_until_done(param_name, { code, state, locals } ) do
     current_state = state[param_name]
     current_value = locals[param_name]
-    params = current_state.type.params_for_shrink(current_state, current_value)
-    params = Map.put(params, :name, param_name)
-
-    shrink(params, code, locals)
+    current_state.type.params_for_shrink(current_state, current_value)
+    |> Map.put(:name, param_name)
+    |> shrink(code, locals)
   end
 
   # We know that the test fails with the current value. See if we
