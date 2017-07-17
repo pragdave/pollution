@@ -87,7 +87,7 @@ defmodule Pollution.State do
     end)
   end
 
-  defp must_have_trimming_function(%__MODULE__{ min: min, max: max} = state) do
+  defp must_have_trimming_function(%__MODULE__{ min: min, max: max}) do
     fn limit -> limit >= min && limit <= max end
   end
 

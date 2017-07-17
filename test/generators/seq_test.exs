@@ -25,7 +25,7 @@ defmodule SeqTest do
     { ints, strings } = seq(of: [int(min: 3, max: 5000), string(min: 2, max: 15)])
                         |> G.as_stream
                         |> Enum.take(6)
-                        |> Enum.partition(&is_integer/1)
+                        |> Enum.split_with(&is_integer/1)
 
     assert length(ints)    == 3
     assert length(strings) == 3
