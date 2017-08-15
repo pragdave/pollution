@@ -48,10 +48,10 @@ defmodule Pollution.Generator.List do
   # Shrinking stuff #
   ###################
 
-  def params_for_shrink(%{ min: min, max: max }, current) do
+  def params_for_shrink(%{ min: min }, current) do
     %SP{
       low:       min,   # lengths
-      high:      max,
+      high:      current, # last failing value
       current:   current,
       shrink:    &shrink_one/1,
       backtrack: &shrink_backtrack/1
@@ -63,12 +63,12 @@ defmodule Pollution.Generator.List do
     %SP{ sp | done: true }
   end
 
-  def shrink_one(sp = %SP{current: [ _head | tail ]})  do
-    %SP{ sp | current: tail }
+  def shrink_one(sp = %SP{current: [ _head | tail ] = current})  do
+    %SP{ sp | current: tail, high: current }
   end
 
-  def shrink_backtrack(sp = %SP{}) do
-    %SP{ sp | done: true }
+  def shrink_backtrack(sp = %SP{high: high}) do
+    %SP{ sp | current: high, done: true }
   end
 
 

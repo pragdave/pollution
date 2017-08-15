@@ -17,7 +17,7 @@ defmodule Shrinker.ListTest do
       assert_passes = fn (_) ->
         flunk "shouldn't call the code"
       end
-    
+
       assert do_shrink(assert_passes, [], min: 0, max: 0) == []
     end
 
@@ -25,10 +25,10 @@ defmodule Shrinker.ListTest do
       assert_passes = fn (_) ->
         flunk "shouldn't call the code"
       end
-    
+
       assert do_shrink(assert_passes, [1,2,3], min: 3, max: 3) == [1,2,3]
     end
-    
+
     test "reduces the length of a list to zero if appropriate" do
       assert_passes = fn (_) ->
         false
@@ -38,10 +38,16 @@ defmodule Shrinker.ListTest do
 
     test "reduces the length until a test passes" do
       assert_passes = fn (%{wibble: val}) ->
-        length(val) <= 2
+        length(val) <= 1
       end
       assert do_shrink(assert_passes, [1,2,3,4], min: 0) == [3,4]
     end
 
+    test "stops immediately if the first shrink passes" do
+      assert_passes = fn (_) ->
+        true
+      end
+      assert do_shrink(assert_passes, [1,2,3,4], min: 0) == [1,2,3,4]
+    end
   end
 end
