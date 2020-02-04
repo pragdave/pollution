@@ -114,7 +114,7 @@ defmodule Pollution.Generator.String do
 
 
   def shrink_one(sp = %SP{low: low, current: current})
-  when :erlang.size(current) == low do
+  when byte_size(current) == low do
     %SP{ sp | done: true }
   end
 
